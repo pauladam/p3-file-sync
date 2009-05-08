@@ -1,0 +1,1 @@
+kill `ps aux | grep runserver | head -n 1 | awk '{print $2}'`
