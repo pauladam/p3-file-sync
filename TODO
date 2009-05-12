@@ -3,21 +3,30 @@ Projects are due 12 noon may 21
 13% of grade
 
 P1 Reqs
-1. Login - The user will visit a main login page and your web service will use
-one of the Google Account Authentication API methods to log in.  Settings -
-Once logged in, the user may visit a settings page that will allow him/her to
-set and/or change the root directory that will be exposed by the application.
-In other words, if the web service receives a request to list all of a user's
-files, it will provide a listing of all files and directories found under the
-root directory.
+1. Login - 
+  A) (DONE) The user will visit a main login page and your web 
+  service will use one of the Google Account Authentication API methods to log in.  
+  
+  B) Settings - Once logged in, the user may visit 
+             a settings page that will allow him/her 
+             to set and/or change the root directory 
+             that will be exposed by the application.  
+             In other words, if the web service receives a
+             request to list all of a user's files, it will 
+             provide a listing of all files and directories 
+             found under the root directory.
 
-2. File View - The main interface of your service will be a file view that
-lists all files available in the root directory, and all of the files available
-in the user's Google Documents account.  For each file, the interface will list
-(at minimum) the name of the file, the size of the file, and the last time the
-file was modified.  You will also provide the user with an option to open a
-file and an option to upload a local file to the user's Google Documents
-account.
+2. File View - 
+  A) (DONE) The main interface of your service will be a file view that lists all
+  files available in the root directory, and all of the files available in the
+  user's Google Documents account.  For each file, the interface will list (at
+  minimum) the name of the file, the size of the file, and the last time the
+  file was modified.  
+
+  B) You will also provide the user with an option to open a
+file and 
+
+  C) an option to upload a local file to the user's Google Documents account.
 
 3. Search - You will also provide the user with an option to search for files
 meeting certain criteria.  The user may search by file name (contains or
@@ -120,11 +129,13 @@ For each /xml URL above, you will also support html/{URL} where html takes the p
 
 P2 Reqs
 
-1. Login - The user must use his/her Google credentials to log in to your application
-2. View List of Local Files - See Project 1.  Make sure your update thread periodically refreshes this list.
-(DONE) 3. View Contents of Local Files - See Project 1.
-4. View List of Google Docs Files - See Project 1.
-5. View Contents of Google Docs Files - See Project 1.
+1. (DONE) Login - The user must use his/her Google credentials to log in to your application
+2. View List of Local Files - See Project 
+  A.  Make sure your update thread periodically refreshes this list.
+(NOT DONE) 3. View Contents of Local Files - See Project 1.
+  UPDATE THREAD ISNT WORKING 
+4. (DONE) View List of Google Docs Files - See Project 1.
+5. (DONE) View Contents of Google Docs Files - See Project 1.
 6. View List of Remote Files - The user may select any of his/her devices and
 see a list of files available on that device.  Note, you will serve cached
 information that is potentially stale.
