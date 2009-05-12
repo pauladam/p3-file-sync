@@ -30,11 +30,16 @@ def authd_with_gdocs(request):
     gd_client.GetDocumentListFeed()
     return True
   else:
-    return False
+    # Are we getting a token from the incoming GET?
+    single_use_token = gdata.auth.extract_auth_sub_token_from_url(get_full_url(request))
+    gdocs_client = gdata.docs.service.DocsService(source='ivo-filesync-v1')
+    gdocs_client.UpgradeToSessionToken(single_use_token)
+    # Succeeded? So store in the session
+    request.session['gd_client'] = gdocs_client
+    return True
 
-  ## Are we getting a token from the incoming GET?
-  #single_use_token = gdata.auth.extract_auth_sub_token_from_url(get_full_url(request))
-  #gd_client = gdata.docs.service.DocsService(source='ivo-filesync-v1')
+  return False
+
   #try:
   #  gd_client.UpgradeToSessionToken(single_use_token)
   #except gdata.service.NonAuthSubToken:
