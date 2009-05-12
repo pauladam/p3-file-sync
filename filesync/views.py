@@ -90,11 +90,6 @@ def index(request):
   gdocs_client = request.session['gd_client']
   gdocs_entries = gdocs_client.GetDocumentListFeed().entry
 
-  ## Loop through the feed and extract each document entry.
-  #for document_entry in documents_feed.entry:
-  #  # Display the title of the document on the command line.
-  #  print document_entry.title.text
-
   gdocs_templ_entries = []
   for doc in gdocs_entries:
     d = {}
@@ -106,12 +101,18 @@ def index(request):
     gdocs_templ_entries.append(d)
 
   files = list(File.objects.all())
-  # TODO: Will need to massage files as well
-  # for better file size and last modified date display
-  # TODO: Also need to add download link 
-  # TODO also need to add upload link to google docs
 
-  return render_to_response('index.html', {'files': files,'gdocs_entries':gdocs_templ_entries})
+  local_docs_templ_entries = []
+  for f in files:
+    d = {}
+    d['name'] = f.name
+    d['size'] = f.size
+    d['mtime'] = datetime.datetime.fromtimestamp(f.mtime)
+    d['full_path'] = f.full_path
+    d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
+    local_docs_templ_entries.append(d)
+
+  return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries})
 
 def set_basedir(request):
   from background import BackgroundWorker
@@ -128,7 +129,6 @@ def set_basedir(request):
  
   return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
-#def download(request, filename):
 def download(request, filepath):
   basename = filepath.split('/')[-1]
   response = HttpResponse(mimetype=mimetypes.guess_type(basename))
