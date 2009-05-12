@@ -1,5 +1,8 @@
 # Django settings for p3 project.
 
+import os
+HOME = os.getcwd()
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -66,6 +69,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'p3.urls'
 
 TEMPLATE_DIRS = (
+    HOME+'/templates',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -78,3 +82,4 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'p3.filesync',
 )
+
