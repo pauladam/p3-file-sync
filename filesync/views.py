@@ -89,8 +89,16 @@ def index(request):
 
   if not authd_with_gdocs(request):
     return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
+  else: 
+    # If we just logged in, redirect back home to clean up the crufty url
+    # containing the tokens passed back from google
+    if 'token' in request.GET.keys():
+      return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
   gdocs_client = request.session['gd_client']
+
+  # TODO: Should probably de-couple this from the request as 
+  # it takes a few seconds...
   gdocs_entries = gdocs_client.GetDocumentListFeed().entry
 
   gdocs_templ_entries = []
