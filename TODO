@@ -5,35 +5,35 @@ Projects are due 12 noon may 21
 P1 Reqs
 1. Login - 
   A) (DONE) The user will visit a main login page and your web 
-  service will use one of the Google Account Authentication API methods to log in.  
+            service will use one of the Google Account Authentication API methods to log in.  
   
-  B) Settings - Once logged in, the user may visit 
-             a settings page that will allow him/her 
-             to set and/or change the root directory 
-             that will be exposed by the application.  
-             In other words, if the web service receives a
-             request to list all of a user's files, it will 
-             provide a listing of all files and directories 
-             found under the root directory.
+  B) Settings - Once logged in, the user may visit a settings page that will allow him/her 
+                to set and/or change the root directory that will be exposed by the application.  
+                In other words, if the web service receives a request to list all of a user's files, it will 
+                provide a listing of all files and directories found under the root directory.
+
+      Two Problems
+      1. Worker doesnt watch fs for changes
+      2. nested dirs arent supported
 
 2. File View - 
   A) (DONE) The main interface of your service will be a file view that lists all
-  files available in the root directory, and all of the files available in the
-  user's Google Documents account.  For each file, the interface will list (at
-  minimum) the name of the file, the size of the file, and the last time the
-  file was modified.  
+            files available in the root directory, and all of the files available in the
+            user's Google Documents account.  For each file, the interface will list (at
+            minimum) the name of the file, the size of the file, and the last time the
+            file was modified.  
 
-  B) You will also provide the user with an option to open a
-file and 
+  B) (DONE) You will also provide the user with an option to open a
+     file and 
 
-  C) an option to upload a local file to the user's Google Documents account.
+  C) (DONE) an option to upload a local file to the user's Google Documents account.
 
 3. Search - You will also provide the user with an option to search for files
-meeting certain criteria.  The user may search by file name (contains or
-matches) or by modified date.  Your service will provide the file view listing
-only files matching the given criteria.
+            meeting certain criteria.  The user may search by file name (contains or
+            matches) or by modified date.  Your service will provide the file view listing
+            only files matching the given criteria.
 
-1. 
+1. (DONE)
   /login  
   Allows user to authenticate using Google username and password.
  
