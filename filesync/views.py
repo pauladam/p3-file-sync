@@ -5,7 +5,7 @@ from p3.filesync.models import File
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 import gdata.docs
 import gdata.docs.service
@@ -131,4 +131,26 @@ def download(request, filepath):
   response['Content-Length'] = os.path.getsize(filepath)
   response.write(open(filepath).read())
   return response
+
+def upload_to_gdocs(request, filepath):
+  gdocs_client = request.session['gd_client']
+
+  filename = filepath.split('/')[-1]
+  ext = filename.split('.')[-1].upper()
+
+  # Is this file type supported?
+  if not gdata.docs.service.SUPPORTED_FILETYPES.get(ext):
+    error = 'File type %s not supported for uploads to google docs' % ext.lower()
+    print error
+    #return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'error':error})
+    raise Http404
+
+  print "extension : %s" % ext
+  ms = gdata.MediaSource(file_path=filepath, content_type=gdata.docs.service.SUPPORTED_FILETYPES[ext])
+  entry = gdocs_client.UploadDocument(ms, filename)
+  print 'Document now accessible online at:', entry.GetAlternateLink().href
+
+  #return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'error':error})
+  # Redirect to index
+  return HttpResponseRedirect(reverse('p3.filesync.views.index', args=(1,)))
 
