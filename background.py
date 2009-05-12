@@ -1,4 +1,4 @@
-import time, os, re
+import time, os, re, sys
 from filesync.models import File
 from threading import Thread
 

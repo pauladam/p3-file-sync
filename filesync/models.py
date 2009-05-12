@@ -1,9 +1,5 @@
 from django.db import models
 
-# Just using this as a hook point to 
-# initiate our background tasks
-import background
-
 # Create your models here.
 
 class File(models.Model):
