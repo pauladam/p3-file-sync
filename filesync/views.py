@@ -1,4 +1,4 @@
-import datetime
+import os, datetime, mimetypes
 
 from p3.filesync.models import File
 
@@ -148,4 +148,12 @@ def set_basedir(request):
  
   return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
+#def download(request, filename):
+def download(request, filepath):
+  basename = filepath.split('/')[-1]
+  response = HttpResponse(mimetype=mimetypes.guess_type(basename))
+  response['Content-Disposition'] = "attachment; filename=" + basename
+  response['Content-Length'] = os.path.getsize(filepath)
+  response.write(open(filepath).read())
+  return response
 
