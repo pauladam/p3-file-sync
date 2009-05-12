@@ -126,17 +126,20 @@ def index(request):
   return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries})
 
 def set_basedir(request):
-  from background import BackgroundWorker
+  #from background import BackgroundWorker
+  from background import check_fs
+  import threading
   basedir = request.POST['basedir']
 
   # Purge db of old contents as were changing the root dir...
   File.objects.all().delete()
 
-  # XXX Isnt catching changes?
+  # REMEMBER: TODO: Factor out this path
+  t = threading.Timer(0.0, check_fs, kwargs={'root':basedir}).start()
 
-  # Start our fs monitor
-  worker = BackgroundWorker(basedir)
-  worker.start()
+  # sleep for a second, give the fs walker a chance to get some entries
+  # in the db
+  time.sleep(1)
  
   return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
