@@ -1,0 +1,65 @@
+<!-- TODO Support live changes -->
+<form method='post' action='/set_basedir'>
+Change the shared directory
+<input name='basedir' type='text'>
+<input type='submit'>
+</form>
+
+{% if gdocs_entries %}
+<b>Google Docs</b>
+  <table>
+    <tr>
+      <th>File Name</th>
+      <th>Last Modified</th>
+      <th>View</th>
+      <th>Download</th>
+    </tr>
+    {% for doc in gdocs_entries %}
+      <tr>
+        <td>{{ doc.name }}</td>
+
+        {% if doc.lastmodified.0 %}
+          <td>{{ doc.lastmodified.0 }} {{ doc.lastmodified.1 }}{{ doc.lastmodified.0|pluralize}} ago</td>
+        {% else %}
+          <td>{{ doc.lastmodified.1 }}</td>
+        {% endif %}
+
+        <td>
+          <a href='{{ doc.view_link }}'><img src='/static/images/external.png'></a>
+        </td>
+
+        <td>
+          <a href='{{ doc.download_link }}'><img src='/static/images/download.gif'></a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+    <p>No files are available.</p>
+{% endif %}
+
+<br>
+<b>Local Files</b>
+
+{% if files %}
+  <table>
+    <tr>
+      <th>File Name</th>
+      <th>File Size</th>
+      <th>Last Modified</th>
+      <th>Download</th>
+      <th>Upload to google docs</th>
+    </tr>
+    {% for file in files %}
+      <tr>
+        <td>{{ file.name }}</td>
+        <td>{{ file.size }}</td>
+        <td>{{ file.mtime }}</td>
+        <td> download link </td>
+        <td> upload to google docs link </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+    <p>No files are available.</p>
+{% endif %}

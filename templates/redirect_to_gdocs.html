@@ -1,0 +1,35 @@
+<html>
+<head>
+</head>
+<body>
+
+You are currently not logged in. You will be redirected to google docs in <span id='countdown'>5</span>
+
+<br>
+<input type='button' id='stop_counter' value='Dont redirect'>
+
+<script src='/static/js/jquery.min.js'></script>
+<script language='javascript'>
+
+  var count_el = $('#countdown');
+  var n;
+
+  var interval_id = window.setInterval(function(){
+    n = count_el.text();
+    
+    if(n > 0){
+      count_el.text(n-1);
+    }else{
+      {% autoescape off %}
+      window.location = '{{ authsub_url }}';
+      {% endautoescape %}
+    }
+
+  },1000);
+
+  $('#stop_counter').click(function(){ window.clearInterval(interval_id); });
+
+</script>
+
+</body>
+</html>
