@@ -17,17 +17,10 @@ Change the shared directory
     {% for doc in gdocs_entries %}
       <tr>
         <td>{{ doc.name }}</td>
-
-        {% if doc.lastmodified.0 %}
-          <td>{{ doc.lastmodified.0 }} {{ doc.lastmodified.1 }}{{ doc.lastmodified.0|pluralize}} ago</td>
-        {% else %}
-          <td>{{ doc.lastmodified.1 }}</td>
-        {% endif %}
-
+        <td>{{ doc.lastmodified|timesince }} ago</td>
         <td>
           <a href='{{ doc.view_link }}'><img src='/static/images/external.png'></a>
         </td>
-
         <td>
           <a href='{{ doc.download_link }}'><img src='/static/images/download.gif'></a>
         </td>
@@ -53,9 +46,11 @@ Change the shared directory
     {% for file in files %}
       <tr>
         <td>{{ file.name }}</td>
-        <td>{{ file.size }}</td>
+        <td>{{ file.size|filesizeformat }}</td>
         <td>{{ file.mtime }}</td>
-        <td> download link </td>
+        <td>
+          <a href='/download/{{ file.full_path }}'><img src='/static/images/download.gif'></a>
+        </td>
         <td> upload to google docs link </td>
       </tr>
     {% endfor %}

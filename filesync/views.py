@@ -12,31 +12,6 @@ import gdata.docs.service
 import gdata.auth
 import gdata.service
 
-def human_readable_age(dt):
-  now = datetime.datetime.utcnow()
-  timedelta = now - dt
-
-  yago = timedelta.days / 365
-  mago = timedelta.days / 30
-  wago = timedelta.days / 52
-  dago = timedelta.days / 1
-  hago = timedelta.days * 24
-  miago = timedelta.days * 24 * 60
-  sago = timedelta.days * 24 * 60 * 60
-
-  # Could extend for hours, minutes etc
-
-  if yago > 0:
-    return (yago, 'year')
-  elif mago > 0:
-    return (mago, 'month')
-  elif wago > 0:
-    return (wago, 'week')
-  elif dago > 0:
-    return (dago, 'day')
-  else:
-    return (None,'a short while ago')
-
 def get_full_url(request):
   return 'http://'+request.META['HTTP_HOST'] + request.META['PATH_INFO'] + '?' + request.META['QUERY_STRING']
 
@@ -120,7 +95,7 @@ def index(request):
     d = {}
     d['name'] = doc.title.text
     lastmodified = datetime.datetime.strptime(doc.updated.text[:-5],"%Y-%m-%dT%H:%M:%S")
-    d['lastmodified'] = human_readable_age(lastmodified)
+    d['lastmodified'] = lastmodified
     d['view_link'] = doc.GetHtmlLink().href
     d['download_link'] = doc.GetMediaURL()
     gdocs_templ_entries.append(d)
