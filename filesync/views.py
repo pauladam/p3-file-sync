@@ -1,4 +1,4 @@
-import os, datetime, mimetypes
+import os, datetime, mimetypes, time
 
 from p3.filesync.models import File
 
@@ -81,6 +81,9 @@ def authd_with_gdocs(request):
 
   #return False
   ##  print gd_client.token_store
+
+def login(request):
+  return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
   
 def index(request):
 
