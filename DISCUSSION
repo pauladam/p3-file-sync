@@ -1,1 +1,5 @@
 Django's built in webserver serves the same function as the restlets webserver but since Python is interpreted Django can simply re-load the source every time it detects an update to the source. This makes development much faster as it removes not only the compile cycle but the server restart step as well. In practice this means that the edit cycle, for many practical cases, is distilled down to a source edit followed by a browser refresh.
+
+Java support for asynchronous tasks such as threading is definitely much more thought out. Django doesnt really support or encourage asynchronous tasks (such as watching the filesystem), instead most of the work is done via one-off cron jobs as far as I can tell. Though there are some new, young frameworks / approaches in Django for creating 'jobs' and the like, its still fairly new territory and not nearly as mature as whats available from the JDK.
+
+
