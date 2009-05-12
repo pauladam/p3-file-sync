@@ -1,60 +1,115 @@
-<!-- TODO Support live changes -->
-<form method='post' action='/set_basedir'>
-Change the shared directory
-<input name='basedir' type='text'>
-<input type='submit'>
-</form>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/reset-min.css"> 
+    <link rel="stylesheet" type="text/css" href="/static/css/site.css"> 
 
-{% if gdocs_entries %}
-<b>Google Docs</b>
-  <table>
-    <tr>
-      <th>File Name</th>
-      <th>Last Modified</th>
-      <th>View</th>
-      <th>Download</th>
-    </tr>
-    {% for doc in gdocs_entries %}
-      <tr>
-        <td>{{ doc.name }}</td>
-        <td>{{ doc.lastmodified|timesince }} ago</td>
-        <td>
-          <a href='{{ doc.view_link }}'><img src='/static/images/external.png'></a>
-        </td>
-        <td>
-          <a href='{{ doc.download_link }}'><img src='/static/images/download.gif'></a>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-{% else %}
-    <p>No files are available.</p>
-{% endif %}
+    <!-- Data table deps -->
+    <!-- Combo-handled YUI CSS files: --> 
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/datatable/assets/skins/sam/datatable.css"> 
+    <!-- Combo-handled YUI JS files: --> 
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/element/element-min.js&2.7.0/build/datasource/datasource-min.js&2.7.0/build/datatable/datatable-min.js"></script> 
+  </head>
 
-<br>
-<b>Local Files</b>
+  <body class=" yui-skin-sam">
 
-{% if files %}
-  <table>
-    <tr>
-      <th>File Name</th>
-      <th>File Size</th>
-      <th>Last Modified</th>
-      <th>Download</th>
-      <th>Upload to google docs</th>
-    </tr>
-    {% for file in files %}
-      <tr>
-        <td>{{ file.name }}</td>
-        <td>{{ file.size|filesizeformat }}</td>
-        <td>{{ file.mtime }}</td>
-        <td>
-          <a href='/download/{{ file.full_path }}'><img src='/static/images/download.gif'></a>
-        </td>
-        <td> upload to google docs link </td>
-      </tr>
-    {% endfor %}
-  </table>
-{% else %}
-    <p>No files are available.</p>
-{% endif %}
+
+  <!-- TODO Support live changes -->
+  <form method='post' action='/set_basedir'>
+  Change the shared directory
+  <input name='basedir' type='text'>
+  <input type='submit'>
+  </form>
+
+  {% if gdocs_entries %}
+  <b>Google Docs</b>
+    <div id='markup_gdocs'>
+      <table id='gdocs'>
+        {% for doc in gdocs_entries %}
+          <tr>
+            <td>{{ doc.name }}</td>
+            <td>{{ doc.lastmodified|timesince }} ago</td>
+            <td>
+              <a href='{{ doc.view_link }}'><img title='View file in Google Docs' src='/static/images/external.png'></a>
+            </td>
+            <td>
+              <a href='{{ doc.download_link }}'><img title='Download file from Google Docs' src='/static/images/download.gif'></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+      <p>No files are available.</p>
+  {% endif %}
+
+  <br>
+  <b>Local Files</b>
+
+  {% if files %}
+    <div id='markup_local_files'>
+      <table id='local_files'>
+        {% for file in files %}
+          <tr>
+            <td>{{ file.name }}</td>
+            <td>{{ file.size|filesizeformat }}</td>
+            <td>{{ file.mtime|timesince }} ago</td>
+            <td>
+              <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
+            </td>
+            <td> 
+              {% if file.gdocs_able_to_upload %}
+              <a href='/upload_to_gdocs/{{ file.full_path }}'><img title='Upload to Google Docs' src='/static/images/upload.png'></a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+      <p>No files are available.</p>
+  {% endif %}
+
+  <script>
+  YAHOO.util.Event.addListener(window, "load", function() { 
+      YAHOO.example.EnhanceFromMarkup = new function() { 
+
+        // GDocs Table
+        var myColumnDefs_g = [ {key:"name",label:"File Name",sortable:true}, 
+                             {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                             {key:"view",label:"View"}, 
+                             {key:"download",label:"Download"}]; 
+
+        this.myDataSource_g = new YAHOO.util.DataSource(YAHOO.util.Dom.get("gdocs")); 
+        this.myDataSource_g.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
+        this.myDataSource_g.responseSchema = { fields: [{key:"name"}, 
+                                                      {key:"lastmodified"}, 
+                                                      {key:"view"}, 
+                                                      {key:"download"} ] }; 
+
+        this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, 
+                                                        {sortedBy:{key:"name",dir:"desc"}} ); 
+
+        // Local files table
+        var myColumnDefs_l = [ {key:"name",label:"File Name",sortable:true}, 
+                             {key:"size",label:"File Size"}, 
+                             {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                             {key:"download",label:"Download File"},
+                             {key:"upload",label:"Upload to Google Docs"}]; 
+
+        this.myDataSource_l = new YAHOO.util.DataSource(YAHOO.util.Dom.get("local_files")); 
+        this.myDataSource_l.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
+        this.myDataSource_l.responseSchema = { fields: [{key:"name"}, 
+                                                      {key:"size"}, 
+                                                      {key:"lastmodified"}, 
+                                                      {key:"download"}, 
+                                                      {key:"upload"} ] }; 
+
+        this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, 
+                                                        {sortedBy:{key:"name",dir:"desc"}} ); 
+
+      }; 
+  }); 
+  </script>
+
+  </body>
+<html>
