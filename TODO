@@ -13,8 +13,11 @@ P1 Reqs
                 provide a listing of all files and directories found under the root directory.
 
       Two Problems
-      1. Worker doesnt watch fs for changes
-      2. nested dirs arent supported
+      1. (DONE) Worker doesnt watch fs for changes
+      2. (DONE) nested dirs arent supported, (yes they are)
+
+      3. Need to multiplex files on the user so that multiple (different users) can log in 
+         and see their own set of files
 
 2. File View - 
   A) (DONE) The main interface of your service will be a file view that lists all
@@ -196,4 +199,7 @@ retrieves a public key from the CA.
 
 Other Notes
 You will need to decide how and where you will store replicas.  For example, you might allow the user to configure the "Backup" directory where other devices may store replicas.
+
+Can use django_session_messages for anonymous user session based flash type msesages
+http://django-session-messages.googlecode.com/svn/trunk/docs/overview.txt
 

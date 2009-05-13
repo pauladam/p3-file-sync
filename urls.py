@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     (r'^download(?P<filepath>.*)','p3.filesync.views.download'),
     (r'^upload_to_gdocs(?P<filepath>.*)','p3.filesync.views.upload_to_gdocs'),
     (r'^login$','p3.filesync.views.login'),
+    
+    (r'(?P<device_name>)/xml/filelist', 'p3.filesync.views.filelist'),
 
     # If this gets too full of p3 stuff, can re-factor like so: 
     # (r'^p3/', include('p3.foo.urls')),

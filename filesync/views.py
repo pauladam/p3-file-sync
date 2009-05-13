@@ -12,6 +12,35 @@ import gdata.docs.service
 import gdata.auth
 import gdata.service
 
+# TODO: Move util funcs to ... utils!
+
+# Return a filelist xml stanza 
+# <FileList>
+#   <File>
+#     <Path>/path/to/file</Path>
+#     <Name>filename.ext</Name>
+#     <Size>file size</Size>
+#     <LastModified>last mod date</LastModified>
+#   </File>
+#   ...
+# </FileList>  
+def xmlify_objects(files):
+  import xml.etree.ElementTree as ET
+  root = ET.Element("FileList")
+  for file in files:
+    file_node = ET.SubElement(root,'File')
+
+    path_node = ET.SubElement(file_node,'Path')
+    path_node.text = file.path
+    name_node = ET.SubElement(file_node,'Name')
+    name_node.text = file.name
+    size_node = ET.SubElement(file_node,'Size')
+    size_node.text = str(file.size)
+    lastmodified_node = ET.SubElement(file_node,'LastModified')
+    lastmodified_node.text = str(file.mtime)
+
+  return ET.tostring(root)
+
 def get_full_url(request):
   return 'http://'+request.META['HTTP_HOST'] + request.META['PATH_INFO'] + '?' + request.META['QUERY_STRING']
 
@@ -120,13 +149,22 @@ def index(request):
     d['size'] = f.size
     d['mtime'] = datetime.datetime.fromtimestamp(f.mtime)
     d['full_path'] = f.full_path
+    d['path'] = f.path
     d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
     local_docs_templ_entries.append(d)
 
-  return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries})
+  return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
+
+# Move filelist methods to their own view 
+def filelist(request, device_name='all'):
+  print 'running filelist'
+
+  xml_out = xmlify_objects(File.objects.all())
+
+  return HttpResponse(xml_out, mimetype="text/xml")
+
 
 def set_basedir(request):
-  #from background import BackgroundWorker
   from background import check_fs
   import threading
   basedir = request.POST['basedir']
