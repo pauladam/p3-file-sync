@@ -114,7 +114,7 @@ def authd_with_gdocs(request):
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
   
-def index(request):
+def index(request, message=None, error=None):
 
   if not authd_with_gdocs(request):
     return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
@@ -172,7 +172,6 @@ def set_basedir(request):
   # Purge db of old contents as were changing the root dir...
   File.objects.all().delete()
 
-  # REMEMBER: TODO: Factor out this path
   t = threading.Timer(0.0, check_fs, kwargs={'root':basedir}).start()
 
   # sleep for a second, give the fs walker a chance to get some entries
