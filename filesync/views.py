@@ -201,12 +201,11 @@ def upload_to_gdocs(request, filepath):
     #return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'error':error})
     raise Http404
 
-  print "extension : %s" % ext
   ms = gdata.MediaSource(file_path=filepath, content_type=gdata.docs.service.SUPPORTED_FILETYPES[ext])
   entry = gdocs_client.UploadDocument(ms, filename)
-  print 'Document now accessible online at:', entry.GetAlternateLink().href
+  info = '%s uploaded successfully to Google Docs' % filename
 
   #return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'error':error})
   # Redirect to index
-  return HttpResponseRedirect(reverse('p3.filesync.views.index', args=(1,)))
+  return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
