@@ -1,13 +1,13 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/static/css/reset-min.css"> 
-    <link rel="stylesheet" type="text/css" href="/static/css/site.css"> 
 
     <!-- Data table deps -->
     <!-- Combo-handled YUI CSS files: --> 
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/datatable/assets/skins/sam/datatable.css"> 
     <!-- Combo-handled YUI JS files: --> 
     <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/element/element-min.js&2.7.0/build/datasource/datasource-min.js&2.7.0/build/datatable/datatable-min.js"></script> 
+    <link rel="stylesheet" type="text/css" href="/static/css/site.css"> 
   </head>
 
   <body class=" yui-skin-sam">
@@ -19,6 +19,10 @@
   <input name='basedir' type='text'>
   <input type='submit'>
   </form>
+
+  {% if message %}
+    {{ message }}
+  {% endif %}
 
   {% if gdocs_entries %}
   <b>Google Docs</b>
@@ -51,6 +55,7 @@
         {% for file in files %}
           <tr>
             <td>{{ file.name }}</td>
+            <td>{{ file.path }}</td>
             <td>{{ file.size|filesizeformat }}</td>
             <td>{{ file.mtime|timesince }} ago</td>
             <td>
@@ -82,27 +87,29 @@
         this.myDataSource_g = new YAHOO.util.DataSource(YAHOO.util.Dom.get("gdocs")); 
         this.myDataSource_g.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
         this.myDataSource_g.responseSchema = { fields: [{key:"name"}, 
-                                                      {key:"lastmodified"}, 
-                                                      {key:"view"}, 
-                                                      {key:"download"} ] }; 
+                                                        {key:"lastmodified"}, 
+                                                        {key:"view"}, 
+                                                        {key:"download"} ] }; 
 
         this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, 
                                                         {sortedBy:{key:"name",dir:"desc"}} ); 
 
         // Local files table
         var myColumnDefs_l = [ {key:"name",label:"File Name",sortable:true}, 
+                             {key:"path",label:"Path"}, 
                              {key:"size",label:"File Size"}, 
                              {key:"lastmodified",label:"Last Modified",sortable:true}, 
-                             {key:"download",label:"Download File"},
-                             {key:"upload",label:"Upload to Google Docs"}]; 
+                             {key:"download",label:"Download", maxAutoWidth:50},
+                             {key:"upload",label:"Upload", maxAutoWidth:35}]; 
 
         this.myDataSource_l = new YAHOO.util.DataSource(YAHOO.util.Dom.get("local_files")); 
         this.myDataSource_l.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
         this.myDataSource_l.responseSchema = { fields: [{key:"name"}, 
-                                                      {key:"size"}, 
-                                                      {key:"lastmodified"}, 
-                                                      {key:"download"}, 
-                                                      {key:"upload"} ] }; 
+                                                        {key:"path"}, 
+                                                        {key:"size"}, 
+                                                        {key:"lastmodified"}, 
+                                                        {key:"download"}, 
+                                                        {key:"upload"} ] }; 
 
         this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, 
                                                         {sortedBy:{key:"name",dir:"desc"}} ); 
