@@ -45,6 +45,7 @@ def get_full_url(request):
   return 'http://'+request.META['HTTP_HOST'] + request.META['PATH_INFO'] + '?' + request.META['QUERY_STRING']
 
 def get_authsub_url():
+  # TODO: Careful here... probably ought to change this...
   next = 'http://ivo:8000/'
   scopes = ['http://docs.google.com/feeds/']
   secure = False  # set secure=True to request a secure AuthSub token
@@ -62,20 +63,17 @@ def authd_with_gdocs(request):
     # Are we getting a token from the incoming GET?
     single_use_token = gdata.auth.extract_auth_sub_token_from_url(get_full_url(request))
     gdocs_client = gdata.docs.service.DocsService(source='ivo-filesync-v1')
-    gdocs_client.UpgradeToSessionToken(single_use_token)
+    try:
+      gdocs_client.UpgradeToSessionToken(single_use_token)
+    except gdata.service.NonAuthSubToken:
+      return False
+
     # Succeeded? So store in the session
     request.session['gd_client'] = gdocs_client
     return True
 
   return False
 
-  #try:
-  #  gd_client.UpgradeToSessionToken(single_use_token)
-  #except gdata.service.NonAuthSubToken:
-  #  # Nope not in this request, lets continue 
-  #  # maybe the token is stored in the session
-  #  pass
-  #
   #if request.session.get('authd',False):
   #  #print PSUEDO_AUTH_URL % str(request.session['authd']).split('=')[1] 
   #  # stored_session_token_str = str(request.session['authd']).split('=')[1]
@@ -215,7 +213,6 @@ def upload_to_gdocs(request, filepath):
   entry = gdocs_client.UploadDocument(ms, filename)
   info = '%s uploaded successfully to Google Docs' % filename
 
-  #return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'error':error})
   # Redirect to index
   return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
