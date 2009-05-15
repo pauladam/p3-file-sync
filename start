@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./start_server.py $1
+less server_log

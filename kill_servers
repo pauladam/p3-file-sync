@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Finds the running django web servers and kills 'em
+for server_pid in ` ps aux | grep 'python manage.py runserver' | grep -v grep | awk -F " " '{print $2}'`; 
+  do kill $server_pid; 
+done; 
+
