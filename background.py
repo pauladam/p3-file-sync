@@ -1,6 +1,7 @@
 import time, os, re, sys, threading
 from filesync.models import File
 
+# TODO:XXX: Only displaying files for the deepest directory
 def check_fs(root, device_name):
   # Run 1
   if len(File.objects.all()) < 1:
@@ -13,8 +14,13 @@ def check_fs(root, device_name):
           mtime = os.stat(full_file_path).st_mtime
           size = os.stat(full_file_path).st_size
           # Terse I know :) but its fine, seriously dont worry about it 
-          File(name=f, size=size, mtime=mtime, path=path, full_path=full_file_path, device_name=device_name).save()
-
+          File(name=f, 
+               size=size, 
+               mtime=mtime, 
+               path=path, 
+               full_path=full_file_path, 
+               device_name=device_name,
+               rootdir=root).save()
   # Run 1 + n
   # sys.stderr.write('.')
   time.sleep(2)
@@ -65,7 +71,13 @@ def check_fs(root, device_name):
         elif full_file_path not in known_files:
           statinfo = os.stat(full_file_path)
           print 'found a new file, adding it: %s' % full_file_path
-          File(name=f, size=statinfo.st_size, mtime=statinfo.st_mtime, path=path, full_path=full_file_path).save()
+          File(name=f, 
+               size=size, 
+               mtime=mtime, 
+               path=path, 
+               full_path=full_file_path, 
+               device_name=device_name,
+               rootdir=root).save()
 
   # And reset timer
   lt = threading.Timer(5.0, check_fs, kwargs={'root':root,'device_name':device_name}).start()

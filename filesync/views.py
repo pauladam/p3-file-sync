@@ -170,7 +170,7 @@ def settings(request):
                    <Root directory="%s"/>
                  </Settings>"""
 
-    root_dir = File.objects.all()[:1].get().path
+    root_dir = File.objects.all()[:1].get().rootdir
 
     return HttpResponse(xml_out % root_dir, mimetype="text/xml")
 

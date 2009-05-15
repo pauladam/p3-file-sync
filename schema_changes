@@ -1,5 +1,18 @@
 
 Fairly painless approach to upgrading schema
 1, delete all the relevant objects in the db :(
+
+  In [7]: File.objects.all().delete()
+
 2, drop the table, use python manage.py sqlclear for help
-3, python manage.py syncdb
+
+  $ python manage.py sqlclear filesync > sqlclear
+  $ sqlite3 filesync.db
+  SQLite version 3.5.9
+  Enter ".help" for instructions
+  sqlite> .read sqlclear
+
+3, Update schema in models.py or whatever
+
+3, Rebuild tables
+  $ python manage.py syncdb

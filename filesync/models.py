@@ -6,6 +6,7 @@ class File(models.Model):
   full_path = models.CharField(max_length=255)
   path = models.CharField(max_length=255)
   name = models.CharField(max_length=128)
+  rootdir = models.CharField(max_length=255)
   mtime = models.FloatField()
   size = models.FloatField()
   deleted = models.BooleanField(default=False)
