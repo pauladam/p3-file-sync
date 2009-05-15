@@ -106,13 +106,10 @@ def authd_with_gdocs(request):
   #except:
   #  return False
 
-  #return False
-  ##  print gd_client.token_store
-
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
   
-def index(request, message=None, error=None):
+def index(request, message=None, error=None, device_name='all', output_format='html'):
 
   if not authd_with_gdocs(request):
     return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
