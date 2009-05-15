@@ -4,52 +4,51 @@ Projects are due 12 noon may 21
 
 P1 Reqs
 1. Login - 
-  A) (DONE) The user will visit a main login page and your web 
+  (DONE) A) The user will visit a main login page and your web 
             service will use one of the Google Account Authentication API methods to log in.  
   
-  B) (DONE) Settings - Once logged in, the user may visit a settings page that will allow him/her 
+   (DONE) B) Settings - Once logged in, the user may visit a settings page that will allow him/her 
                 to set and/or change the root directory that will be exposed by the application.  
                 In other words, if the web service receives a request to list all of a user's files, it will 
                 provide a listing of all files and directories found under the root directory.
 
       Two Problems
-      1. (DONE) Worker doesnt watch fs for changes
-      2. (DONE) nested dirs arent supported, (yes they are)
+      (DONE) 1. Worker doesnt watch fs for changes
+      2. nested dirs arent supported, (yes they are), yeah but not correctly
 
 
-2. File View - 
-  A) (DONE) The main interface of your service will be a file view that lists all
+2. File View
+  (DONE) A) The main interface of your service will be a file view that lists all
             files available in the root directory, and all of the files available in the
             user's Google Documents account.  For each file, the interface will list (at
             minimum) the name of the file, the size of the file, and the last time the
             file was modified.  
 
-  B) (DONE) You will also provide the user with an option to open a
-     file and 
+   (DONE) B) You will also provide the user with an option to open a file and 
 
-  C) (DONE) an option to upload a local file to the user's Google Documents account.
+   (DONE) C) an option to upload a local file to the user's Google Documents account.
 
-3. (DONE) Search - You will also provide the user with an option to search for files
+(DONE) 3. Search - You will also provide the user with an option to search for files
             meeting certain criteria.  The user may search by file name (contains or
             matches) or by modified date.  Your service will provide the file view listing
             only files matching the given criteria.
 
-1. (DONE)
+(DONE) 1.
   /login  
   Allows user to authenticate using Google username and password.
  
-2. (DONE)
+(DONE) 2.
   /settings
   200 OK
       <Settings>
           <Root directory="/path/to/directory"/>
       </Settings>  
 
-3. (DONE)
+(DONE) 3.
   /settings?rootdir={directory}
   200 OK Sets root directory to directory given.
 
-4. (DONE)
+(DONE) 4.
   {device_name}/xml/filelist
   200 OK
       <FileList>
@@ -62,7 +61,7 @@ P1 Reqs
       </FileList>    
   List all files on the computer identified by device_name.  
 
-5. (DONE)
+(DONE) 5.
   {device_name}/xml/filelist?contains={query}
   200 OK
       <FileList>
@@ -75,7 +74,7 @@ P1 Reqs
       </FileList>    
   List all files on the computer identified by device_name that have a file name that contains the query term.  
 
-6. (DONE)
+(DONE) 6.
   {device_name}/xml/filelist?matches={query}
   200 OK
       <FileList>
@@ -88,7 +87,7 @@ P1 Reqs
       </FileList>    
   List all files on the computer identified by device_name that have a file name that match the query term exactly.  
 
-7.(DONE)
+(DONE) 7.   
   {device_name}/xml/filelist?modifiedsince={date}
   200 OK
       <FileList>
@@ -101,8 +100,8 @@ P1 Reqs
       </FileList>
   List all files on the computer identified by device_name that have been modified since the date provided.  
 
-8. 
-  gdocs/xml/filelist
+(DONE) 8.
+gdocs/xml/filelist
   200 OK
       <FileList>
           <File>
@@ -114,7 +113,7 @@ P1 Reqs
       </FileList>
   List all files in the current user's Google Documents account.
 
-9. (DONE)
+(DONE) 9.
   xml/gdocsupload/path/to/file/and/filename.ext
   200 OK
   Upload the file specified to the current user's Google Documents account.
@@ -125,19 +124,17 @@ P1 Reqs
   File Contents Return contents of specified file.
 
 HTML INTERFACE
-11. (DONE) For each /xml URL above, you will also support html/{URL} where html takes the
+(DONE) 11. For each /xml URL above, you will also support html/{URL} where html takes the
            place of xml.  The content returned in response to the HTML request will be the
            XML content transformed into the appropriate HTML format for viewing in a
            browser.
 
 P2 Reqs
-1. (DONE) Login - The user must use his/her Google credentials to log in to your application
+(DONE) 1. Login - The user must use his/her Google credentials to log in to your application
 
-2. View List of Local Files - See Project 
-  A.  Make sure your update thread periodically refreshes this list.
+(DONE) 2. View List of Local Files - See Project 
 
-(NOT DONE) 3. View Contents of Local Files - See Project 1.
-  UPDATE THREAD ISNT WORKING 
+(DONE) 3. View Contents of Local Files - See Project 1.
 
 4. (DONE) View List of Google Docs Files - See Project 1.
 
@@ -151,10 +148,12 @@ P2 Reqs
    user to view files stored on that device.  Optionally, serve cached versions of
    the requested files.
 
-8. Search Local Files - See Project 1.
+(DONE) 8. Search Local Files - See Project 1.
+
 9. Search Remote Files - Allow the user to search the cached list of remote
 files.  Support the searches specified for Project 1: contains, matches,
 modifiedsince.
+
 10. Backup Local Files - Allow the user to request that local files be backed
 up on other devices.  The user will specify the desired number of replicas.
 Your service will, in the background, choose N other devices and send a copy of
