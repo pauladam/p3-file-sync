@@ -271,3 +271,47 @@ Validating models...
 Django version 1.0.2 final, using settings 'p3.settings'
 Development server is running at http://0.0.0.0:8000/
 Quit the server with CONTROL-C.
+Traceback (most recent call last):
+  File "manage.py", line 11, in <module>
+    execute_manager(settings)
+  File "/var/lib/python-support/python2.5/django/core/management/__init__.py", line 338, in execute_manager
+    setup_environ(settings_mod)
+  File "/var/lib/python-support/python2.5/django/core/management/__init__.py", line 316, in setup_environ
+    project_module = __import__(project_name, {}, {}, [''])
+  File "/home/paul/src/cs682/project3/sync/__init__.py", line 2, in <module>
+    from filesync.models import File
+  File "/home/paul/src/cs682/project3/p3/../p3/filesync/models.py", line 1, in <module>
+  File "/var/lib/python-support/python2.5/django/db/__init__.py", line 9, in <module>
+    if not settings.DATABASE_ENGINE:
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 28, in __getattr__
+    self._import_settings()
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 59, in _import_settings
+    self._target = Settings(settings_module)
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 94, in __init__
+    raise ImportError, "Could not import settings '%s' (Is it on sys.path? Does it have syntax errors?): %s" % (self.SETTINGS_MODULE, e)
+ImportError: Could not import settings 'p3.settings' (Is it on sys.path? Does it have syntax errors?): No module named p3.settings
+Traceback (most recent call last):
+  File "manage.py", line 11, in <module>
+    execute_manager(settings)
+  File "/var/lib/python-support/python2.5/django/core/management/__init__.py", line 338, in execute_manager
+    setup_environ(settings_mod)
+  File "/var/lib/python-support/python2.5/django/core/management/__init__.py", line 316, in setup_environ
+    project_module = __import__(project_name, {}, {}, [''])
+  File "/home/paul/src/cs682/project3/sync/__init__.py", line 2, in <module>
+    from filesync.models import File
+  File "/home/paul/src/cs682/project3/p3/../p3/filesync/models.py", line 1, in <module>
+  File "/var/lib/python-support/python2.5/django/db/__init__.py", line 9, in <module>
+    if not settings.DATABASE_ENGINE:
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 28, in __getattr__
+    self._import_settings()
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 59, in _import_settings
+    self._target = Settings(settings_module)
+  File "/var/lib/python-support/python2.5/django/conf/__init__.py", line 94, in __init__
+    raise ImportError, "Could not import settings '%s' (Is it on sys.path? Does it have syntax errors?): %s" % (self.SETTINGS_MODULE, e)
+ImportError: Could not import settings 'p3.settings' (Is it on sys.path? Does it have syntax errors?): No module named p3.settings
+[15/May/2009 16:26:54] "GET / HTTP/1.1" 200 79392
+[15/May/2009 16:26:55] "GET /static/css/reset-fonts-grids.css HTTP/1.1" 304 0
+[15/May/2009 16:26:55] "GET /static/css/site.css HTTP/1.1" 304 0
+[15/May/2009 16:26:55] "GET /static/images/upload.png HTTP/1.1" 304 0
+[15/May/2009 16:26:55] "GET /static/images/external.png HTTP/1.1" 304 0
+[15/May/2009 16:26:55] "GET /static/images/download.gif HTTP/1.1" 304 0
