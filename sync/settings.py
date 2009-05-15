@@ -66,7 +66,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'p3.urls'
+ROOT_URLCONF = 'sync.urls'
 
 TEMPLATE_DIRS = (
     HOME+'/templates',
@@ -80,6 +80,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'p3.filesync',
+    'sync.filesync',
 )
 

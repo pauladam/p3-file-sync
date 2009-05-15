@@ -1,4 +1,7 @@
+CHANING AN APP NAME
+The app name corresponds to the directory name and there are a lot of references to this name throughout the project (like in urls, settings, views etc) but if you just go ahead and search-replace them you should be good
 
+SCHEMA CHANGES (Not migrations :( )
 Fairly painless approach to upgrading schema
 1, delete all the relevant objects in the db :(
 

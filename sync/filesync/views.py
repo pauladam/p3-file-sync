@@ -1,6 +1,6 @@
 import os, datetime, mimetypes, time
 
-from p3.filesync.models import File
+from sync.filesync.models import File
 
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
@@ -85,7 +85,7 @@ def index(request, message=None, error=None, device_name='all', output_format='h
     # If we just logged in, redirect back home to clean up the crufty url
     # containing the tokens passed back from google
     if 'token' in request.GET.keys():
-      return HttpResponseRedirect(reverse('p3.filesync.views.index'))
+      return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
   gdocs_client = request.session['gd_client']
 
@@ -170,7 +170,7 @@ def settings(request):
   # in the db
   time.sleep(1)
  
-  return HttpResponseRedirect(reverse('p3.filesync.views.index'))
+  return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
 def download(request, filepath):
   basename = filepath.split('/')[-1]
@@ -198,5 +198,5 @@ def upload_to_gdocs(request, filepath):
   info = '%s uploaded successfully to Google Docs' % filename
 
   # Redirect to index
-  return HttpResponseRedirect(reverse('p3.filesync.views.index'))
+  return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
