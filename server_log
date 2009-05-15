@@ -201,3 +201,73 @@ KeyboardInterrupt
   File "/usr/lib/python2.5/sre_parse.py", line 201, in match
     def match(self, char, skip=1):
 KeyboardInterrupt
+[15/May/2009 10:04:58] "GET / HTTP/1.1" 200 50041
+[15/May/2009 10:04:58] "GET /static/images/download.gif HTTP/1.1" 304 0
+[15/May/2009 10:04:58] "GET /static/css/site.css HTTP/1.1" 304 0
+[15/May/2009 10:04:58] "GET /static/images/upload.png HTTP/1.1" 304 0
+setup_environ
+setup_environ
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+[15/May/2009 10:06:04] "GET / HTTP/1.1" 200 50041
+[15/May/2009 10:06:04] "GET /static/images/download.gif HTTP/1.1" 304 0
+[15/May/2009 10:06:04] "GET /static/css/site.css HTTP/1.1" 304 0
+[15/May/2009 10:06:04] "GET /static/images/upload.png HTTP/1.1" 304 0
+setup_environ
+setup_environ
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+[15/May/2009 10:06:47] "GET / HTTP/1.1" 200 50041
+[15/May/2009 10:06:47] "GET /static/css/site.css HTTP/1.1" 304 0
+[15/May/2009 10:06:47] "GET /static/images/download.gif HTTP/1.1" 304 0
+[15/May/2009 10:06:48] "GET /static/images/upload.png HTTP/1.1" 304 0
+[15/May/2009 10:15:43] "GET / HTTP/1.1" 200 50041
+[15/May/2009 10:15:43] "GET /static/css/reset-min.css HTTP/1.1" 200 940
+[15/May/2009 10:15:43] "GET /static/css/site.css HTTP/1.1" 200 103
+[15/May/2009 10:15:43] "GET /static/images/upload.png HTTP/1.1" 200 522
+[15/May/2009 10:15:43] "GET /static/images/download.gif HTTP/1.1" 200 189
+[15/May/2009 10:15:43] "GET /static/images/external.png HTTP/1.1" 200 165
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'p3.settings'
+Development server is running at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
