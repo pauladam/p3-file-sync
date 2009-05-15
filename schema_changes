@@ -1,0 +1,5 @@
+
+Fairly painless approach to upgrading schema
+1, delete all the relevant objects in the db :(
+2, drop the table, use python manage.py sqlclear for help
+3, python manage.py syncdb
