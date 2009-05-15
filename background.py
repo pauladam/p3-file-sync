@@ -75,8 +75,8 @@ def check_fs(root, device_name):
           statinfo = os.stat(full_file_path)
           print 'found a new file, adding it: %s' % full_file_path
           File(name=f, 
-               size=size, 
-               mtime=mtime, 
+               size=statinfo.st_size, 
+               mtime=statinfo.st_mtime, 
                path=path, 
                full_path=full_file_path, 
                device_name=device_name,
