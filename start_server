@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# Remove this as we know no threads are running
-# since were starting up!
-rm /tmp/filesync_scan_fs_start_lock
-
-DJANGO_SETTINGS_MODULE=p3.settings
-python manage.py runserver 0.0.0.0:8000
