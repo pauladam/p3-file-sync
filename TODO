@@ -16,8 +16,6 @@ P1 Reqs
       1. (DONE) Worker doesnt watch fs for changes
       2. (DONE) nested dirs arent supported, (yes they are)
 
-      3. Need to multiplex files on the user so that multiple (different users) can log in 
-         and see their own set of files, currently its global, all open
 
 2. File View - 
   A) (DONE) The main interface of your service will be a file view that lists all
@@ -103,7 +101,7 @@ P1 Reqs
       </FileList>
   List all files on the computer identified by device_name that have been modified since the date provided.  
 
-8.
+8. 
   gdocs/xml/filelist
   200 OK
       <FileList>
@@ -116,7 +114,7 @@ P1 Reqs
       </FileList>
   List all files in the current user's Google Documents account.
 
-9.
+9. (DONE)
   xml/gdocsupload/path/to/file/and/filename.ext
   200 OK
   Upload the file specified to the current user's Google Documents account.
@@ -213,3 +211,9 @@ devices may store replicas.
 
 Extra:
 Write tests (unit?) to exercise each project requirement
+
+DEFERRED
+      3. (EH, maybe not such a big priority, we can probably assume a single user ... )
+         Need to multiplex files on the user so that multiple (different users) can log in 
+         and see their own set of files, currently its global, all open
+
