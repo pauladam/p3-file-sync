@@ -1,12 +1,13 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/static/css/reset-min.css"> 
+    <!-- <link rel="stylesheet" type="text/css" href="/static/css/reset-min.css">  -->
+    <link rel="stylesheet" type="text/css" href="/static/css/reset-fonts-grids.css"> 
 
     <!-- Data table deps -->
     <!-- Combo-handled YUI CSS files: --> 
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/datatable/assets/skins/sam/datatable.css"> 
     <!-- Combo-handled YUI JS files: --> 
-    <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/element/element-min.js&2.7.0/build/datasource/datasource-min.js&2.7.0/build/datatable/datatable-min.js"></script> 
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/element/element-min.js&2.7.0/build/paginator/paginator-min.js&2.7.0/build/datasource/datasource-min.js&2.7.0/build/datatable/datatable-min.js"></script> 
     <link rel="stylesheet" type="text/css" href="/static/css/site.css"> 
   </head>
 
@@ -18,10 +19,10 @@
     Add a device <br>
 
     Directory to share: 
-    <input name='rootdir' type='text'>
+    <input name='rootdir' type='text' value='/home/paul/shared'>
 
     Device Name:
-    <input name='device_name' type='text'>
+    <input name='device_name' type='text' value='shared'>
 
     <input type='submit' value='Add'>
   </form>
@@ -86,9 +87,9 @@
 
         // GDocs Table
         var myColumnDefs_g = [ {key:"name",label:"File Name",sortable:true}, 
-                             {key:"lastmodified",label:"Last Modified",sortable:true}, 
-                             {key:"view",label:"View"}, 
-                             {key:"download",label:"Download"}]; 
+                               {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                               {key:"view",label:"View"}, 
+                               {key:"download",label:"Download"}]; 
 
         this.myDataSource_g = new YAHOO.util.DataSource(YAHOO.util.Dom.get("gdocs")); 
         this.myDataSource_g.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
@@ -97,17 +98,18 @@
                                                         {key:"view"}, 
                                                         {key:"download"} ] }; 
 
-        this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, 
-                                                        {sortedBy:{key:"name",dir:"desc"}} ); 
+     
+        var configs_g = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
+        this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, configs_g); 
 
         // Local files table
         var myColumnDefs_l = [ {key:"name",label:"File Name",sortable:true}, 
-                             {key:"path",label:"Path"}, 
-                             {key:"size",label:"File Size"}, 
-                             {key:"lastmodified",label:"Last Modified",sortable:true}, 
-                             {key:"download",label:"Download", maxAutoWidth:50},
-                             {key:"upload",label:"Upload", maxAutoWidth:35}]; 
-
+                               {key:"path",label:"Path"}, 
+                               {key:"size",label:"File Size"}, 
+                               {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                               {key:"download",label:"Download", maxAutoWidth:50},
+                               {key:"upload",label:"Upload", maxAutoWidth:35}]; 
+  
         this.myDataSource_l = new YAHOO.util.DataSource(YAHOO.util.Dom.get("local_files")); 
         this.myDataSource_l.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
         this.myDataSource_l.responseSchema = { fields: [{key:"name"}, 
@@ -117,8 +119,8 @@
                                                         {key:"download"}, 
                                                         {key:"upload"} ] }; 
 
-        this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, 
-                                                        {sortedBy:{key:"name",dir:"desc"}} ); 
+        var configs_l = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
+        this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, configs_l); 
 
       }; 
   }); 

@@ -1,3 +1,11 @@
 .yui-skin-sam .yui-dt-liner { white-space:nowrap; }  
-.yui-skin-sam .yui-dt table { font-size:12px; }
+.yui-skin-sam .yui-dt table { 
+  font-size:12px; 
+  width: 100%;
+}
+
+#markup_gdocs table, #markup_local_files table { 
+  margin-left:auto; margin-right:auto; 
+} 
+
 
