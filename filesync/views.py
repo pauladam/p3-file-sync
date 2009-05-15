@@ -74,26 +74,6 @@ def authd_with_gdocs(request):
 
   return False
 
-  #if request.session.get('authd',False):
-  #  #print PSUEDO_AUTH_URL % str(request.session['authd']).split('=')[1] 
-  #  # stored_session_token_str = str(request.session['authd']).split('=')[1]
-  #  
-  #  try:
-  #    #single_use_token = gdata.auth.extract_auth_sub_token_from_url(PSUEDO_AUTH_URL + stored_session_token_str)
-  #    #print PSUEDO_AUTH_URL + stored_session_token_str
-  #    #print single_use_token
-  #    gd_client = gdata.docs.service.DocsService(source='ivo-filesync-v1')
-  #    print 'token'
-  #    print type(request.session['authd'])
-  #    print request.session['authd']
-  #    gd_client.UpgradeToSessionToken(request.session['authd'])
-  #  except: # gdata.service.NonAuthSubToken:
-  #    # Nope, our stored token didnt work either, 
-  #    # lets clear the old one and request a new one
-  #    print 'couldnt upgrade :('
-  #    del request.session['authd']
-  #    pass
-
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
 
@@ -107,6 +87,22 @@ def index(request, message=None, error=None, device_name='all', output_format='h
     if 'token' in request.GET.keys():
       return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
+  gdocs_client = request.session['gd_client']
+
+  # TODO: Should probably de-couple this from the request as 
+  # it takes a few seconds...
+  gdocs_entries = gdocs_client.GetDocumentListFeed().entry
+
+  gdocs_templ_entries = []
+  for doc in gdocs_entries:
+    d = {}
+    d['name'] = doc.title.text
+    lastmodified = datetime.datetime.strptime(doc.updated.text[:-5],"%Y-%m-%dT%H:%M:%S")
+    d['lastmodified'] = lastmodified
+    d['view_link'] = doc.GetHtmlLink().href
+    d['download_link'] = doc.GetMediaURL()
+    gdocs_templ_entries.append(d)
+
   # Set specification (matches, contains, modifiedsince ...)?
   if request.GET.has_key('contains'):
     file_set = File.objects.filter(name__contains=request.GET.get('contains'))
@@ -118,7 +114,12 @@ def index(request, message=None, error=None, device_name='all', output_format='h
     file_set = File.objects.all()
 
   if output_format == 'xml':
-    xml_out = xmlify_objects(file_set)
+    if device_name == 'gdocs':
+      name_map = {'Name':'name','LastModified':'lastmodified','View_Link':'view_link','Download_Link':'download_link'}
+      xml_out  = xmlify_objects(gdocs_templ_entries, name_map)
+    else:
+      xml_out = xmlify_objects(file_set, {'Path':'path','Name':'name','Size':'size','LastModified':'mtime'})
+
     return HttpResponse(xml_out, mimetype="text/xml")
   else:
 
@@ -135,22 +136,8 @@ def index(request, message=None, error=None, device_name='all', output_format='h
       d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
       local_docs_templ_entries.append(d)
 
-    gdocs_client = request.session['gd_client']
-
-    # TODO: Should probably de-couple this from the request as 
-    # it takes a few seconds...
-    gdocs_entries = gdocs_client.GetDocumentListFeed().entry
-
-    gdocs_templ_entries = []
-    for doc in gdocs_entries:
-      d = {}
-      d['name'] = doc.title.text
-      lastmodified = datetime.datetime.strptime(doc.updated.text[:-5],"%Y-%m-%dT%H:%M:%S")
-      d['lastmodified'] = lastmodified
-      d['view_link'] = doc.GetHtmlLink().href
-      d['download_link'] = doc.GetMediaURL()
-      gdocs_templ_entries.append(d)
-
+      if device_name == 'gdocs':
+        local_docs_templ_entries = []
 
     return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
 
