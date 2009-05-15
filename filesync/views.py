@@ -119,27 +119,22 @@ def index(request, message=None, error=None, device_name='all', output_format='h
     if 'token' in request.GET.keys():
       return HttpResponseRedirect(reverse('p3.filesync.views.index'))
 
-  gdocs_client = request.session['gd_client']
-
-  # TODO: Should probably de-couple this from the request as 
-  # it takes a few seconds...
-  gdocs_entries = gdocs_client.GetDocumentListFeed().entry
-
-  gdocs_templ_entries = []
-  for doc in gdocs_entries:
-    d = {}
-    d['name'] = doc.title.text
-    lastmodified = datetime.datetime.strptime(doc.updated.text[:-5],"%Y-%m-%dT%H:%M:%S")
-    d['lastmodified'] = lastmodified
-    d['view_link'] = doc.GetHtmlLink().href
-    d['download_link'] = doc.GetMediaURL()
-    gdocs_templ_entries.append(d)
+  # Set specification (matches, contains, modifiedsince ...)?
+  if request.GET.has_key('contains'):
+    file_set = File.objects.filter(name__contains=request.GET.get('contains'))
+  elif request.GET.has_key('matches'):
+    file_set = File.objects.filter(name__exact=request.GET.get('matches'))
+  elif request.GET.has_key('modifiedsince'):
+    file_set = File.objects.filter(mtime__gte=request.GET.get('modifiedsince'))
+  else:
+    file_set = File.objects.all()
 
   if output_format == 'xml':
-    xml_out = xmlify_objects(File.objects.all())
+    xml_out = xmlify_objects(file_set)
     return HttpResponse(xml_out, mimetype="text/xml")
   else:
-    files = list(File.objects.all())
+
+    files = list(file_set)
 
     local_docs_templ_entries = []
     for f in files:
