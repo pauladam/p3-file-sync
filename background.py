@@ -11,19 +11,23 @@ def check_fs(root, device_name):
     print 'first run'
 
     for path, dirs, files in os.walk(root):
-      if len(dirs) == 0:
-        for f in files:
-          full_file_path = "%s/%s" % (path,f)
-          mtime = os.stat(full_file_path).st_mtime
-          size = os.stat(full_file_path).st_size
-          # Terse I know :) but its fine, seriously dont worry about it 
-          File(name=f, 
-               size=size, 
-               mtime=mtime, 
-               path=path, 
-               full_path=full_file_path, 
-               device_name=device_name,
-               rootdir=root).save()
+      for f in files:
+        print path, f
+        full_file_path = '/'.join([path,f])
+
+        print full_file_path
+
+        mtime = os.stat(full_file_path).st_mtime
+        size = os.stat(full_file_path).st_size
+        # Terse I know :) but its fine, seriously dont worry about it 
+        File(name=f, 
+             size=size, 
+             mtime=mtime, 
+             path=path, 
+             full_path=full_file_path, 
+             device_name=device_name,
+             rootdir=root).save()
+
   # Run 1 + n
   # sys.stderr.write('.')
   time.sleep(2)
