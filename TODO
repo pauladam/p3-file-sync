@@ -7,7 +7,7 @@ P1 Reqs
   A) (DONE) The user will visit a main login page and your web 
             service will use one of the Google Account Authentication API methods to log in.  
   
-  B) Settings - Once logged in, the user may visit a settings page that will allow him/her 
+  B) (DONE) Settings - Once logged in, the user may visit a settings page that will allow him/her 
                 to set and/or change the root directory that will be exposed by the application.  
                 In other words, if the web service receives a request to list all of a user's files, it will 
                 provide a listing of all files and directories found under the root directory.
@@ -17,7 +17,7 @@ P1 Reqs
       2. (DONE) nested dirs arent supported, (yes they are)
 
       3. Need to multiplex files on the user so that multiple (different users) can log in 
-         and see their own set of files
+         and see their own set of files, currently its global, all open
 
 2. File View - 
   A) (DONE) The main interface of your service will be a file view that lists all
@@ -40,18 +40,18 @@ P1 Reqs
   /login  
   Allows user to authenticate using Google username and password.
  
-2. 
+2. (DONE)
   /settings
   200 OK
       <Settings>
           <Root directory="/path/to/directory"/>
       </Settings>  
 
-3.
+3. (DONE)
   /settings?rootdir={directory}
   200 OK Sets root directory to directory given.
 
-4. 
+4. (DONE)
   {device_name}/xml/filelist
   200 OK
       <FileList>
