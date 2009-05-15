@@ -9,6 +9,7 @@ class File(models.Model):
   mtime = models.FloatField()
   size = models.FloatField()
   deleted = models.BooleanField(default=False)
+  device_name = models.CharField(max_length=128)
 
   def __unicode__(self):
     return self.full_path

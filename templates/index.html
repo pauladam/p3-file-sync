@@ -14,10 +14,16 @@
 
 
   <!-- TODO Support live changes -->
-  <form method='post' action='/set_basedir'>
-  Change the shared directory
-  <input name='basedir' type='text'>
-  <input type='submit'>
+  <form method='get' action='/settings'>
+    Add a device <br>
+
+    Directory to share: 
+    <input name='rootdir' type='text'>
+
+    Device Name:
+    <input name='device_name' type='text'>
+
+    <input type='submit' value='Add'>
   </form>
 
   {% if message %}

@@ -1,7 +1,7 @@
 import time, os, re, sys, threading
 from filesync.models import File
 
-def check_fs(root):
+def check_fs(root, device_name):
   # Run 1
   if len(File.objects.all()) < 1:
     print 'first run'
@@ -13,7 +13,7 @@ def check_fs(root):
           mtime = os.stat(full_file_path).st_mtime
           size = os.stat(full_file_path).st_size
           # Terse I know :) but its fine, seriously dont worry about it 
-          File(name=f, size=size, mtime=mtime, path=path, full_path=full_file_path).save()
+          File(name=f, size=size, mtime=mtime, path=path, full_path=full_file_path, device_name=device_name).save()
 
   # Run 1 + n
   # sys.stderr.write('.')
@@ -68,5 +68,5 @@ def check_fs(root):
           File(name=f, size=statinfo.st_size, mtime=statinfo.st_mtime, path=path, full_path=full_file_path).save()
 
   # And reset timer
-  lt = threading.Timer(5.0, check_fs, kwargs={'root':root}).start()
+  lt = threading.Timer(5.0, check_fs, kwargs={'root':root,'device_name':device_name}).start()
     

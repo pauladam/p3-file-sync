@@ -140,39 +140,49 @@ def index(request, message=None, error=None):
     d['download_link'] = doc.GetMediaURL()
     gdocs_templ_entries.append(d)
 
-  files = list(File.objects.all())
+  if output_format == 'xml':
+    xml_out = xmlify_objects(File.objects.all())
+    return HttpResponse(xml_out, mimetype="text/xml")
+  else:
+    files = list(File.objects.all())
 
-  local_docs_templ_entries = []
-  for f in files:
-    d = {}
-    d['name'] = f.name
-    d['size'] = f.size
-    d['mtime'] = datetime.datetime.fromtimestamp(f.mtime)
-    d['full_path'] = f.full_path
-    d['path'] = f.path
-    d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
-    local_docs_templ_entries.append(d)
+    local_docs_templ_entries = []
+    for f in files:
+      d = {}
+      d['name'] = f.name
+      d['size'] = f.size
+      d['mtime'] = datetime.datetime.fromtimestamp(f.mtime)
+      d['full_path'] = f.full_path
+      d['path'] = f.path
+      d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
+      local_docs_templ_entries.append(d)
 
+    return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
+
+  # Shouldnt get here
   return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
 
-# Move filelist methods to their own view 
-def filelist(request, device_name='all'):
-  print 'running filelist'
-
-  xml_out = xmlify_objects(File.objects.all())
-
-  return HttpResponse(xml_out, mimetype="text/xml")
-
-
-def set_basedir(request):
+def settings(request):
   from background import check_fs
   import threading
-  basedir = request.POST['basedir']
+
+  basedir = request.GET.get('rootdir', None)
+  device_name = request.GET.get('device_name', None)
+
+  if not basedir or not device_name:
+    # Just return xml rep. of the settings
+    xml_out = """<Settings>
+                   <Root directory="%s"/>
+                 </Settings>"""
+
+    root_dir = File.objects.all()[:1].get().path
+
+    return HttpResponse(xml_out % root_dir, mimetype="text/xml")
 
   # Purge db of old contents as were changing the root dir...
   File.objects.all().delete()
 
-  t = threading.Timer(0.0, check_fs, kwargs={'root':basedir}).start()
+  t = threading.Timer(0.0, check_fs, kwargs={'root':basedir, 'device_name':device_name}).start()
 
   # sleep for a second, give the fs walker a chance to get some entries
   # in the db
