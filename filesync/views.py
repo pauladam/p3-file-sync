@@ -147,6 +147,23 @@ def index(request, message=None, error=None, device_name='all', output_format='h
       d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
       local_docs_templ_entries.append(d)
 
+    gdocs_client = request.session['gd_client']
+
+    # TODO: Should probably de-couple this from the request as 
+    # it takes a few seconds...
+    gdocs_entries = gdocs_client.GetDocumentListFeed().entry
+
+    gdocs_templ_entries = []
+    for doc in gdocs_entries:
+      d = {}
+      d['name'] = doc.title.text
+      lastmodified = datetime.datetime.strptime(doc.updated.text[:-5],"%Y-%m-%dT%H:%M:%S")
+      d['lastmodified'] = lastmodified
+      d['view_link'] = doc.GetHtmlLink().href
+      d['download_link'] = doc.GetMediaURL()
+      gdocs_templ_entries.append(d)
+
+
     return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
 
   # Shouldnt get here
