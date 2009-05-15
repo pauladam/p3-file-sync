@@ -94,18 +94,6 @@ def authd_with_gdocs(request):
   #    del request.session['authd']
   #    pass
 
-  ## We got this far, maybe we have a good token, lets pull
-  ## a document feed to test
-  ## and remember to store the session token in the django session
-
-  #try:
-  #  if gd_client.GetDocumentListFeed():
-  #    request.session['authd'] = single_use_token
-  #    request.session['gd_client'] = gd_client
-  #    return True
-  #except:
-  #  return False
-
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
   
