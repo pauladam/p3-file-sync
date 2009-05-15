@@ -12,11 +12,6 @@ P1 Reqs
                 In other words, if the web service receives a request to list all of a user's files, it will 
                 provide a listing of all files and directories found under the root directory.
 
-      Two Problems
-      (DONE) 1. Worker doesnt watch fs for changes
-      2. nested dirs arent supported, (yes they are), yeah but not correctly
-
-
 2. File View
   (DONE) A) The main interface of your service will be a file view that lists all
             files available in the root directory, and all of the files available in the
@@ -136,9 +131,9 @@ P2 Reqs
 
 (DONE) 3. View Contents of Local Files - See Project 1.
 
-4. (DONE) View List of Google Docs Files - See Project 1.
+(DONE) 4. View List of Google Docs Files - See Project 1.
 
-5. (DONE) View Contents of Google Docs Files - See Project 1.
+(DONE) 5. View Contents of Google Docs Files - See Project 1.
 
 6. View List of Remote Files - The user may select any of his/her devices and
    see a list of files available on that device.  Note, you will serve cached
@@ -215,4 +210,10 @@ DEFERRED
       3. (EH, maybe not such a big priority, we can probably assume a single user ... )
          Need to multiplex files on the user so that multiple (different users) can log in 
          and see their own set of files, currently its global, all open
+
+DONE
+  Two Problems
+  (DONE) 1. Worker doesnt watch fs for changes
+  (DONE) 2. nested dirs arent supported
+
 
