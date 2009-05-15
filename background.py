@@ -63,7 +63,7 @@ def check_fs(root, device_name):
         full_file_path = "%s/%s" % (path,f)
 
         if full_file_path in known_files:
-          file_from_db = File.objects.filter(full_path=full_file_path).get() # using .get() like .one()
+          file_from_db = File.objects.filter(full_path=full_file_path)[:1].get() # using .get() like .one()
           # Set deleted flag to false
           if file_from_db.deleted == True:
             print 'changing file deleted status true->false: %s' % file_from_db
