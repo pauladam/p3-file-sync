@@ -10,7 +10,11 @@ HOME = os.getcwd()
 urlpatterns = patterns('',
     (r'^$','p3.filesync.views.index'),
     (r'^settings$','p3.filesync.views.settings'),
+
     (r'^download(?P<filepath>.*)','p3.filesync.views.download'),
+    # Synonym of the above defined in p1 requirements
+    (r'^xml/file(?P<filepath>.*)','p3.filesync.views.download'),
+
     (r'^upload_to_gdocs(?P<filepath>.*)','p3.filesync.views.upload_to_gdocs'),
     (r'^login$','p3.filesync.views.login'),
     (r'(?P<device_name>\w+)/(?P<output_format>\w+)/filelist', 'p3.filesync.views.index'),
