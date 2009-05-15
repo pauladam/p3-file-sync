@@ -24,20 +24,20 @@ import gdata.service
 #   </File>
 #   ...
 # </FileList>  
-def xmlify_objects(files):
+def xmlify_objects(files, name_map):
+
   import xml.etree.ElementTree as ET
   root = ET.Element("FileList")
   for file in files:
     file_node = ET.SubElement(root,'File')
 
-    path_node = ET.SubElement(file_node,'Path')
-    path_node.text = file.path
-    name_node = ET.SubElement(file_node,'Name')
-    name_node.text = file.name
-    size_node = ET.SubElement(file_node,'Size')
-    size_node.text = str(file.size)
-    lastmodified_node = ET.SubElement(file_node,'LastModified')
-    lastmodified_node.text = str(file.mtime)
+    for display_name, name in name_map.items():
+      n      = ET.SubElement(file_node, display_name)
+      try:
+        n.text = str(file.__getattribute__(name))
+      except AttributeError:
+        # Maybe its not an object but a dict
+        n.text = str(file.get(name))
 
   return ET.tostring(root)
 
@@ -96,7 +96,7 @@ def authd_with_gdocs(request):
 
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
-  
+
 def index(request, message=None, error=None, device_name='all', output_format='html'):
 
   if not authd_with_gdocs(request):
