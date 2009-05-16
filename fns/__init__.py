@@ -32,9 +32,10 @@ def check_filesync_servers():
           # Hes already been removed, no biggie
           pass 
 
-        # Change of host list so lets send out an update
-        #print 'timer ticked, and we removed a host, lets update group'
-        fns_utils.announce_hostlist()
+    # XXX Causes *lots* of chatter but seems to work...
+    # Change of host list so lets send out an update
+    #print 'timer ticked, and we removed a host, lets update group'
+    fns_utils.announce_hostlist()
 
     # And play it again sam...
     t = threading.Timer(30, check_filesync_servers).start()
