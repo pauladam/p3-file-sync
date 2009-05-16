@@ -1,6 +1,17 @@
 from django.db import models
 
-# Create your models here.
+class Device(models.Model):
+  preferred_name  = models.CharField(max_length=255)
+  color = models.CharField(max_length=255)
+  hnportcombo = models.CharField(max_length=255)
+  rootdir = models.CharField(max_length=255)
+  peers = models.CharField(max_length=255)
+
+  def __unicode__(self):
+    return "%s : %s" % (self.preferred_name, self.hnportcombo)
+
+  def peer_list(self):
+    return self.peers.split(',')
 
 class File(models.Model):
   full_path = models.CharField(max_length=255)
