@@ -137,7 +137,7 @@ P2 Reqs
 
 6. View List of Remote Files - The user may select any of his/her devices and
    see a list of files available on that device.  Note, you will serve cached
-   information that is potentially stale.
+   information that is potentially stale. 
 
 7. View Contents of Remote Files - If the remote device is online, allow the
    user to view files stored on that device.  Optionally, serve cached versions of
