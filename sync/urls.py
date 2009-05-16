@@ -15,6 +15,12 @@ urlpatterns = patterns('',
     # stale entries
     (r'^ruok$','sync.filesync.views.ruok'),
 
+    # Accept peer list
+    # set
+    (r'^acceptpeerlist/(?P<peerlist>.*)$','sync.filesync.views.acceptpeerlist'),
+    # get
+    (r'^peerlist$','sync.filesync.views.peerlist'),
+
     (r'^download(?P<filepath>.*)','sync.filesync.views.download'),
     # Synonym of the above defined in p1 requirements
     (r'^xml/file(?P<filepath>.*)','sync.filesync.views.download'),

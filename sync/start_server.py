@@ -18,4 +18,5 @@ for s in range(int(num_servers)):
   port = (default_starting_port + s)
   print 'Starting a server on port %d...' % port
   proc = subprocess.Popen('python manage.py runserver 0.0.0.0:%d' % port, stderr=output_file, stdout=output_file, shell=True)
+  time.sleep(1)
 

@@ -210,5 +210,14 @@ def upload_to_gdocs(request, filepath):
   return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
 def ruok(request):
-  # return HttpResponse("ok", mimetype="text/plain")
   return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
+
+def acceptpeerlist(request, peerlist):
+  self_device.peers = peerlist
+  self_device.save()
+
+  return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
+
+def peerlist(request):
+
+  return HttpResponse("peerlist for %s : %s" % (server_hn_combo,self_device.peers) , mimetype="text/plain")

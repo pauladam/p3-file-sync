@@ -19,10 +19,14 @@ def addhost(request, hn):
   # so make this function idempotent for add's
 
   if len(Host.objects.filter(hostname=hn)) < 1:
-    print 'adding new host'
+    print 'adding new host %s ' % hn
     Host(hostname=hn).save()
   else:
-    print 'wont add host'
+    print 'Already know about host %s, wont add' % hn
+
+  # Announce updated list
+  #print 'adding host lets update group'
+  fns_utils.announce_hostlist()
 
   return HttpResponse(str_out, mimetype="text/plain")
 
