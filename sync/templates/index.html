@@ -13,124 +13,145 @@
 
   <body class=" yui-skin-sam">
 
-  <div style='background-color: {{ this_device.color }};'>
-    Using device: {{ this_device.hnportcombo }} 
+    <div id='doc'>
+
+      <div id='info_bar' style='background-color: {{ this_device.color }};'>
+        Hi! my name is : {{ this_device.hnportcombo }} 
+      </div>
+
+      <span id='titlespan'>My Shared Files</span>
+      <br>
+
+      <!-- Todo: Use preferred name in dropdown if available -->
+      Show files from device: 
+      <select>
+      {% if this_device.peers %}
+        <option value="{{this_device.hnportcombo}}">{{this_device.hnportcombo}}</option>
+        {% for peer in this_device.peer_list %}
+          <option value="{{peer}}">{{peer}}</option>
+        {% endfor %}
+      {% else %}
+        <option value="" disabled>Disabled</option>
+      {% endif %}
+      </select>
+
+      <br><br>
+
+      <!-- TODO Support live changes -->
+      <!-- TODO: Hide this after its been configured, but allow it to be enabled for reconfig -->
+      <!-- TODO Prefill form with values from configuration -->
+      <form method='get' action='/settings'>
+        Change local device shared folder: 
+        <input name='rootdir' type='text' value='{{this_device.rootdir}}'>
+
+        Device Name:
+        <input name='device_name' type='text' value='{{this_device.preferred_name}}'>
+
+        <input type='submit' value='Change'>
+      </form>
+
+      {% if message %}
+        {{ message }}
+      {% endif %}
+
+      <br>
+
+      {% if gdocs_entries %}
+      <b>Google Docs</b>
+        <div id='markup_gdocs'>
+          <table id='gdocs'>
+            {% for doc in gdocs_entries %}
+              <tr>
+                <td>{{ doc.name }}</td>
+                <td>{{ doc.lastmodified|timesince }} ago</td>
+                <td>
+                  <a href='{{ doc.view_link }}'><img title='View file in Google Docs' src='/static/images/external.png'></a>
+                </td>
+                <td>
+                  <a href='{{ doc.download_link }}'><img title='Download file from Google Docs' src='/static/images/download.gif'></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% else %}
+          <p>No files are available.</p>
+      {% endif %}
+
+      <br>
+      <b>Local Files</b>
+
+      {% if files %}
+        <div id='markup_local_files'>
+          <table id='local_files'>
+            {% for file in files %}
+              <tr>
+                <td>{{ file.name }}</td>
+                <td>{{ file.path }}</td>
+                <td>{{ file.size|filesizeformat }}</td>
+                <td>{{ file.mtime|timesince }} ago</td>
+                <td>
+                  <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
+                </td>
+                <td> 
+                  {% if file.gdocs_able_to_upload %}
+                  <a href='/xml/gdocsupload{{ file.full_path }}'><img title='Upload to Google Docs' src='/static/images/upload.png'></a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% else %}
+          <p>No files are available.</p>
+      {% endif %}
+
+    </div>
+
+    <script>
+    YAHOO.util.Event.addListener(window, "load", function() { 
+        YAHOO.example.EnhanceFromMarkup = new function() { 
+
+          // GDocs Table
+          var myColumnDefs_g = [ {key:"name",label:"File Name",sortable:true}, 
+                                 {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                                 {key:"view",label:"View"}, 
+                                 {key:"download",label:"Download"}]; 
+
+          this.myDataSource_g = new YAHOO.util.DataSource(YAHOO.util.Dom.get("gdocs")); 
+          this.myDataSource_g.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
+          this.myDataSource_g.responseSchema = { fields: [{key:"name"}, 
+                                                          {key:"lastmodified"}, 
+                                                          {key:"view"}, 
+                                                          {key:"download"} ] }; 
+
+       
+          var configs_g = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
+          this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, configs_g); 
+
+          // Local files table
+          var myColumnDefs_l = [ {key:"name",label:"File Name",sortable:true}, 
+                                 {key:"path",label:"Path"}, 
+                                 {key:"size",label:"File Size"}, 
+                                 {key:"lastmodified",label:"Last Modified",sortable:true}, 
+                                 {key:"download",label:"Download", maxAutoWidth:50},
+                                 {key:"upload",label:"Upload", maxAutoWidth:35}]; 
     
-  
-  </div>
+          this.myDataSource_l = new YAHOO.util.DataSource(YAHOO.util.Dom.get("local_files")); 
+          this.myDataSource_l.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
+          this.myDataSource_l.responseSchema = { fields: [{key:"name"}, 
+                                                          {key:"path"}, 
+                                                          {key:"size"}, 
+                                                          {key:"lastmodified"}, 
+                                                          {key:"download"}, 
+                                                          {key:"upload"} ] }; 
 
+          var configs_l = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
+          this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, configs_l); 
 
-  <!-- TODO Support live changes -->
-  <form method='get' action='/settings'>
-    Add a device <br>
-
-    Directory to share: 
-    <input name='rootdir' type='text' value='/home/paul/shared'>
-
-    Device Name:
-    <input name='device_name' type='text' value='shared'>
-
-    <input type='submit' value='Add'>
-  </form>
-
-  {% if message %}
-    {{ message }}
-  {% endif %}
-
-  {% if gdocs_entries %}
-  <b>Google Docs</b>
-    <div id='markup_gdocs'>
-      <table id='gdocs'>
-        {% for doc in gdocs_entries %}
-          <tr>
-            <td>{{ doc.name }}</td>
-            <td>{{ doc.lastmodified|timesince }} ago</td>
-            <td>
-              <a href='{{ doc.view_link }}'><img title='View file in Google Docs' src='/static/images/external.png'></a>
-            </td>
-            <td>
-              <a href='{{ doc.download_link }}'><img title='Download file from Google Docs' src='/static/images/download.gif'></a>
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% else %}
-      <p>No files are available.</p>
-  {% endif %}
-
-  <br>
-  <b>Local Files</b>
-
-  {% if files %}
-    <div id='markup_local_files'>
-      <table id='local_files'>
-        {% for file in files %}
-          <tr>
-            <td>{{ file.name }}</td>
-            <td>{{ file.path }}</td>
-            <td>{{ file.size|filesizeformat }}</td>
-            <td>{{ file.mtime|timesince }} ago</td>
-            <td>
-              <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
-            </td>
-            <td> 
-              {% if file.gdocs_able_to_upload %}
-              <a href='/xml/gdocsupload{{ file.full_path }}'><img title='Upload to Google Docs' src='/static/images/upload.png'></a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% else %}
-      <p>No files are available.</p>
-  {% endif %}
-
-  <script>
-  YAHOO.util.Event.addListener(window, "load", function() { 
-      YAHOO.example.EnhanceFromMarkup = new function() { 
-
-        // GDocs Table
-        var myColumnDefs_g = [ {key:"name",label:"File Name",sortable:true}, 
-                               {key:"lastmodified",label:"Last Modified",sortable:true}, 
-                               {key:"view",label:"View"}, 
-                               {key:"download",label:"Download"}]; 
-
-        this.myDataSource_g = new YAHOO.util.DataSource(YAHOO.util.Dom.get("gdocs")); 
-        this.myDataSource_g.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
-        this.myDataSource_g.responseSchema = { fields: [{key:"name"}, 
-                                                        {key:"lastmodified"}, 
-                                                        {key:"view"}, 
-                                                        {key:"download"} ] }; 
-
-     
-        var configs_g = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
-        this.myDataTable_g = new YAHOO.widget.DataTable("markup_gdocs", myColumnDefs_g, this.myDataSource_g, configs_g); 
-
-        // Local files table
-        var myColumnDefs_l = [ {key:"name",label:"File Name",sortable:true}, 
-                               {key:"path",label:"Path"}, 
-                               {key:"size",label:"File Size"}, 
-                               {key:"lastmodified",label:"Last Modified",sortable:true}, 
-                               {key:"download",label:"Download", maxAutoWidth:50},
-                               {key:"upload",label:"Upload", maxAutoWidth:35}]; 
-  
-        this.myDataSource_l = new YAHOO.util.DataSource(YAHOO.util.Dom.get("local_files")); 
-        this.myDataSource_l.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE; 
-        this.myDataSource_l.responseSchema = { fields: [{key:"name"}, 
-                                                        {key:"path"}, 
-                                                        {key:"size"}, 
-                                                        {key:"lastmodified"}, 
-                                                        {key:"download"}, 
-                                                        {key:"upload"} ] }; 
-
-        var configs_l = {sortedBy:{ key:"name",dir:"desc"}, paginator: new YAHOO.widget.Paginator({ rowsPerPage: 10 }) };
-        this.myDataTable_l = new YAHOO.widget.DataTable("markup_local_files", myColumnDefs_l, this.myDataSource_l, configs_l); 
-
-      }; 
-  }); 
-  </script>
+        }; 
+    }); 
+    </script>
 
   </body>
 <html>
