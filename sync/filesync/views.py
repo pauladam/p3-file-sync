@@ -1,6 +1,7 @@
 import os, datetime, mimetypes, time, sys
+import common_utils
 
-from sync.filesync.models import File
+from sync.filesync.models import File, Device
 
 from django.template import Context, loader
 from django.core.urlresolvers import reverse

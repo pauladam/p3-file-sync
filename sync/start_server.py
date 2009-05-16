@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, subprocess
+import os, sys, subprocess, time
 
 try:
   os.remove('/tmp/filesync_scan_fs_start_lock')

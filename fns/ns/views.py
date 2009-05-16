@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from fns.ns.models import Host
+import urllib
+import fns_utils
 
 def hostlist(request):
   str_out = ','.join([h.hostname for h in Host.objects.all()])
