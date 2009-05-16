@@ -1,4 +1,4 @@
-import os, datetime, mimetypes, time, sys
+import os, datetime, mimetypes, time, sys, random
 import common_utils
 
 from sync.filesync.models import File, Device
@@ -107,13 +107,13 @@ def index(request, message=None, error=None, device_name='all', output_format='h
 
   # Set specification (matches, contains, modifiedsince ...)?
   if request.GET.has_key('contains'):
-    file_set = File.objects.filter(name__contains=request.GET.get('contains'))
+    file_set = File.objects.filter(name__contains=request.GET.get('contains')).filter(device=self_device)
   elif request.GET.has_key('matches'):
-    file_set = File.objects.filter(name__exact=request.GET.get('matches'))
+    file_set = File.objects.filter(name__exact=request.GET.get('matches')).filter(device=self_device)
   elif request.GET.has_key('modifiedsince'):
-    file_set = File.objects.filter(mtime__gte=request.GET.get('modifiedsince'))
+    file_set = File.objects.filter(mtime__gte=request.GET.get('modifiedsince')).filter(device=self_device)
   else:
-    file_set = File.objects.all()
+    file_set = File.objects.filter(device=self_device)
 
   if output_format == 'xml':
     if device_name == 'gdocs':
@@ -144,7 +144,8 @@ def index(request, message=None, error=None, device_name='all', output_format='h
     template_context = {'files': local_docs_templ_entries,
                         'gdocs_entries':gdocs_templ_entries, 
                         'message':message,
-                        'this_device':self_device}
+                        'this_device':self_device,
+                        'disk_icons':['Disk%s.gif' % random.randint(1,len(self_device.peer_list())) for i in range(len(self_device.peer_list()))]}
     return render_to_response('index.html', template_context)
 
   # Shouldnt get here
@@ -163,12 +164,17 @@ def settings(request):
                    <Root directory="%s"/>
                  </Settings>"""
 
-    root_dir = File.objects.all()[:1].get().rootdir
+    root_dir = File.objects.filter(device=self_device).get().rootdir
 
     return HttpResponse(xml_out % root_dir, mimetype="text/xml")
 
-  # Purge db of old contents as were changing the root dir...
-  File.objects.all().delete()
+  # Purge db of our old contents as were changing the root dir...
+  File.objects.filter(device=self_device).delete()
+
+  # Set the rootdir on our Device
+  self_device.rootdir = basedir
+  self_device.preferred_name = device_name
+  self_device.save()
 
   t = threading.Timer(0.0, check_fs, kwargs={'root':basedir, 'device_name':device_name}).start()
 

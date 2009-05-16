@@ -22,6 +22,8 @@ class File(models.Model):
   size = models.FloatField()
   deleted = models.BooleanField(default=False)
   device_name = models.CharField(max_length=128)
+  # FK to 'owning' device
+  device = models.ForeignKey(Device)
 
   def __unicode__(self):
     return self.full_path
