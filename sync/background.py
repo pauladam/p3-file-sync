@@ -4,7 +4,6 @@ from filesync.models import File
 # TODO: Check fs isnt started on server start, only after a
 # dir is set. we should start it if we can and we have files to watch..
 
-# TODO:XXX: Only displaying files for the deepest directory
 def check_fs(root, device_name):
   # Run 1
   if len(File.objects.all()) < 1:

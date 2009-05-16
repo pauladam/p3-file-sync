@@ -1,4 +1,5 @@
 #!/bin/bash
 
+./kill_servers
 ./start_server.py $1 &
 less +G server_log
