@@ -13,7 +13,14 @@ def hostlist(request):
 def addhost(request, hn):
   str_out = 'Adding host %s ' % hn
 
-  Host(hostname=hn).save()
+  # We dont want duplicate entries in our db
+  # so make this function idempotent for add's
+
+  if len(Host.objects.filter(hostname=hn)) < 1:
+    print 'adding new host'
+    Host(hostname=hn).save()
+  else:
+    print 'wont add host'
 
   return HttpResponse(str_out, mimetype="text/plain")
 

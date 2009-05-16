@@ -11,6 +11,10 @@ urlpatterns = patterns('',
     (r'^$','sync.filesync.views.index'),
     (r'^settings$','sync.filesync.views.settings'),
 
+    # Status monitor used by name server to clean up 
+    # stale entries
+    (r'^ruok$','sync.filesync.views.ruok'),
+
     (r'^download(?P<filepath>.*)','sync.filesync.views.download'),
     # Synonym of the above defined in p1 requirements
     (r'^xml/file(?P<filepath>.*)','sync.filesync.views.download'),

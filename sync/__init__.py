@@ -2,6 +2,21 @@
 from filesync.models import File
 import threading, sys, os
 from background import check_fs
+import urllib
+
+# reckon our name
+hn = os.popen('hostname').read().strip()
+port = sys.argv[2].split(':')[-1]
+server_hn_combo = "%s:%s" % (hn, port)
+
+# Server start up time so add ourself to 
+# the NS known host list
+NS_ADDRESS = 'http://ivo:6666' # NS lives at a 'known address'
+method = 'addhost'
+payload = server_hn_combo
+url = '/'.join([NS_ADDRESS, method, payload])
+
+urllib.urlopen(url)
 
 # Create a token so we can know if weve 'run' already
 # since django executes this module multiple times.

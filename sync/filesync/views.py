@@ -1,4 +1,4 @@
-import os, datetime, mimetypes, time
+import os, datetime, mimetypes, time, sys
 
 from sync.filesync.models import File
 
@@ -11,6 +11,14 @@ import gdata.docs
 import gdata.docs.service
 import gdata.auth
 import gdata.service
+
+# TODO: Move to a common utils module, as this
+# is used by both servers...
+
+# reckon our name
+hn = os.popen('hostname').read().strip()
+port = sys.argv[2].split(':')[-1]
+server_hn_combo = "%s:%s" % (hn, port)
 
 # TODO: Move util funcs to ... utils!
 
@@ -200,3 +208,6 @@ def upload_to_gdocs(request, filepath):
   # Redirect to index
   return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
+def ruok(request):
+  # return HttpResponse("ok", mimetype="text/plain")
+  return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
