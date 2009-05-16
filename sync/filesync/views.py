@@ -13,15 +13,9 @@ import gdata.docs.service
 import gdata.auth
 import gdata.service
 
-# TODO: Move to a common utils module, as this
-# is used by both servers...
-
 # reckon our name
-hn = os.popen('hostname').read().strip()
-port = sys.argv[2].split(':')[-1]
-server_hn_combo = "%s:%s" % (hn, port)
-
-# TODO: Move util funcs to ... utils!
+server_hn_combo = common_utils.get_hostname()
+self_device = Device.objects.filter(hnportcombo=server_hn_combo).get()
 
 # Return a filelist xml stanza 
 # <FileList>
@@ -148,7 +142,11 @@ def index(request, message=None, error=None, device_name='all', output_format='h
       if device_name == 'gdocs':
         local_docs_templ_entries = []
 
-    return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
+    template_context = {'files': local_docs_templ_entries,
+                        'gdocs_entries':gdocs_templ_entries, 
+                        'message':message,
+                        'this_device':self_device}
+    return render_to_response('index.html', template_context)
 
   # Shouldnt get here
   return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
