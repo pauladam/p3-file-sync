@@ -1,1 +1,2 @@
+#!/bin/bash
 git push github:pauladam/p3.git master
