@@ -315,3 +315,11 @@ ImportError: Could not import settings 'p3.settings' (Is it on sys.path? Does it
 [15/May/2009 16:26:55] "GET /static/images/upload.png HTTP/1.1" 304 0
 [15/May/2009 16:26:55] "GET /static/images/external.png HTTP/1.1" 304 0
 [15/May/2009 16:26:55] "GET /static/images/download.gif HTTP/1.1" 304 0
+setup_environ
+setup_environ
+Validating models...
+0 errors found
+
+Django version 1.0.2 final, using settings 'sync.settings'
+Development server is running at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
