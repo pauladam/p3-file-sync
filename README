@@ -1,0 +1,7 @@
+Project structure is as such:
+
+--> sync 
+  Defines the major work of the filesync project
+
+--> fns
+  A separate lightweight server for managing sync server names (A 'Filesync Name Server')
