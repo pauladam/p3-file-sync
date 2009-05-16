@@ -205,6 +205,8 @@ devices may store replicas.
 
 Extra:
 Write tests (unit?) to exercise each project requirement
+Comment methods
+reorganize utils / methods, split views.py up 
 
 DEFERRED
       3. (EH, maybe not such a big priority, we can probably assume a single user ... )
