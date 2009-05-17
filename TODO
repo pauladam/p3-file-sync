@@ -207,6 +207,7 @@ Extra:
 Write tests (unit?) to exercise each project requirement
 Comment methods
 reorganize utils / methods, split views.py up 
+Enable admin view for filesync
 
 DEFERRED
       3. (EH, maybe not such a big priority, we can probably assume a single user ... )

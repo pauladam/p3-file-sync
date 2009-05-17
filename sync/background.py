@@ -1,8 +1,9 @@
 import time, os, re, sys, threading
 from filesync.models import File, Device
 import common_utils
-import sched, time
+import sched, time, urllib
 from utils import debug
+import utils
 
 # TODO: Check fs isnt started on server start, only after a
 # dir is set. we should start it if we can and we have files to watch..
@@ -27,7 +28,7 @@ class FSChecker:
     #if 'runserver' in sys.argv:
     #  this_device = Device.objects.filter(hnportcombo=common_utils.get_hostname()).get()
 
-    # TODO: while not stopped
+    # TODO: or while not stopped
     while True:
       time.sleep(2)
     
@@ -53,6 +54,9 @@ class FSChecker:
                  rootdir=self.root,
                  device=this_device).save()
 
+        # Files updated, trigger a md broadcast
+        utils.trigger_md_broadcast(this_device.hnportcombo)
+              
       # Run 1 + n
       # Check if any updates are needed to the files in our db
       for file in File.objects.filter(deleted=False, device=this_device):
@@ -63,12 +67,14 @@ class FSChecker:
           if file.size != statinfo.st_size:
             debug('adjusting file sizes: %s ' % file)
             file.size = statinfo.st_size
+            utils.trigger_md_broadcast(this_device.hnportcombo)
             file.save()
 
           # mtimes differ, adjust mtime
           if file.mtime != statinfo.st_mtime:
             debug('adjusting file mtime: %s ' % file)
             file.mtime = statinfo.st_mtime
+            utils.trigger_md_broadcast(this_device.hnportcombo)
             file.save()
 
         except OSError, oserror:
@@ -76,6 +82,7 @@ class FSChecker:
             # The file was deleted
             debug('changing file deleted status false->true: %s' % file  )
             file.deleted = True
+            utils.trigger_md_broadcast(this_device.hnportcombo)
             file.save()
           
       # Do a fs walk just to check for new files
@@ -92,6 +99,7 @@ class FSChecker:
               # Set deleted flag to false
               if file_from_db.deleted == True:
                 debug('changing file deleted status true->false: %s' % file_from_db)
+                utils.trigger_md_broadcast(this_device.hnportcombo)
                 file_from_db.deleted = False
                 file_from_db.save()
 
@@ -99,6 +107,7 @@ class FSChecker:
             elif full_file_path not in known_files:
               statinfo = os.stat(full_file_path)
               debug('[%s] found a new file, adding it: %s' % (this_device, full_file_path))
+              utils.trigger_md_broadcast(this_device.hnportcombo)
               File(name=f, 
                    size=statinfo.st_size, 
                    mtime=statinfo.st_mtime, 
@@ -107,5 +116,4 @@ class FSChecker:
                    device_name=self.device_name,
                    rootdir=self.root,
                    device=this_device).save()
-
 

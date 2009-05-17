@@ -1,0 +1,4 @@
+BEGIN;
+DROP TABLE "filesync_file";
+DROP TABLE "filesync_device";
+COMMIT;

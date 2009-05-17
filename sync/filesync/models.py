@@ -29,11 +29,15 @@ class File(models.Model):
   device = models.ForeignKey(Device)
 
   # Suitable for use in templates
-  def dict_repr(self):
+  def dict_repr(self,json_date=False):
     d = {}
     d['name'] = self.name
     d['size'] = self.size
-    d['mtime'] = datetime.datetime.fromtimestamp(self.mtime)
+    # Encode dates in a json serializable format
+    if json_date:
+      d['mtime'] = datetime.datetime.fromtimestamp(self.mtime).strftime('%Y-%m-%dT%H:%M:%S')
+    else:
+      d['mtime'] = datetime.datetime.fromtimestamp(self.mtime)
     d['full_path'] = self.full_path
     d['path'] = self.path
     d['gdocs_able_to_upload'] = self.full_path.lower().endswith('.doc')

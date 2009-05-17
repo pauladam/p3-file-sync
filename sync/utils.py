@@ -1,4 +1,4 @@
-import logging, os
+import logging, os, urllib
 from django.conf import settings
 
 def get_hex_color():
@@ -39,3 +39,8 @@ def check_fs_running(device_name):
     thread_running = False
 
   return thread_running
+
+def trigger_md_broadcast(hn):
+  url = '/'.join(['http:/',hn,'broadcast_metadata'])
+  urllib.urlopen(url)
+ 

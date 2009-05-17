@@ -22,7 +22,8 @@ if 'runserver' in sys.argv:
   # Add device entry to the local db for our hostname
   # if it doesnt exist already
   if len(Device.objects.filter(hnportcombo=server_hn_combo)) < 1:
-    Device(hnportcombo=server_hn_combo, color=utils.get_hex_color()).save()
+    self_device = Device(hnportcombo=server_hn_combo, color=utils.get_hex_color())
+    self_device.save()
   else: 
     # Get the reference to myself
     self_device = Device.objects.filter(hnportcombo=server_hn_combo).get()

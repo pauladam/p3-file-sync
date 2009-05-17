@@ -1,4 +1,5 @@
-import os, datetime, mimetypes, time, sys, random, cPickle
+import os, datetime, mimetypes, time, sys, random, fcntl, urllib, urllib2
+import simplejson as json
 import common_utils
 import utils
 from utils import debug
@@ -82,6 +83,7 @@ def authd_with_gdocs(request):
 def login(request):
   return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
 
+# TODO: Add param to fetch / show contents of cached md for other devices
 def index(request, message=None, error=None, device_name='all', output_format='html'):
   if not authd_with_gdocs(request):
     return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
@@ -147,8 +149,7 @@ def index(request, message=None, error=None, device_name='all', output_format='h
   return render_to_response('index.html', {'files': local_docs_templ_entries,'gdocs_entries':gdocs_templ_entries, 'message':message})
 
 def settings(request):
-  from background import check_fs
-  import threading
+  import background 
 
   basedir = request.GET.get('rootdir', None)
   device_name = request.GET.get('device_name', None)
@@ -171,7 +172,8 @@ def settings(request):
   self_device.preferred_name = device_name
   self_device.save()
 
-  t = threading.Timer(0.0, check_fs, kwargs={'root':basedir, 'device_name':device_name}).start()
+  fs_checker = background.FSChecker(basedir, device_name)
+  fs_checker.start()
 
   # sleep for a second, give the fs walker a chance to get some entries
   # in the db
@@ -221,6 +223,8 @@ def peerlist(request):
   return HttpResponse("peerlist for %s : %s" % (server_hn_combo,self_device.peers) , mimetype="text/plain")
 
 def broadcast_metadata(request):
+  
+  # TODO: Also take care of the case where we need to send md about 3rd party devices as well
 
   # Pack up our file metadata and send to known peers
 
@@ -228,26 +232,82 @@ def broadcast_metadata(request):
   files = utils.get_files_for_device(self_device)
   l = []
   for f in files:
-    l.append(f.dict_repr())
+    l.append(f.dict_repr(json_date=True))
 
   # Dump format : dict  {'device_name':'ivo:8001', 'version': 1, 'files': [file list]}
 
   # Pickle list
   # If we have a dump already read its version, update and re-write
   # else, simply write 
-  target_pickle_fn = 'data/%s.metadata.pickle' % self_device.hnportcombo.replace(':','_')
+  target_dump_fn = 'data/%s.metadata.json' % self_device.hnportcombo.replace(':','_')
 
   dump_dict = {'device_name':self_device.hnportcombo, 'version':1, 'files':l}
 
-  if os.path.exists(target_pickle_fn):
-    last_dump = cPickle.load(file(target_pickle_fn,'r'))
+  if os.path.exists(target_dump_fn):
+    dump_fd = file(target_dump_fn,'r')
+    last_dump = json.load(dump_fd)
+    dump_fd.close()
+
     dump_dict['version'] = last_dump['version'] + 1
-    cPickle.dump(dump_dict,file(target_pickle_fn,'w'))
-    debug("pickle version: %s %s " % (target_pickle_fn, last_dump['version']))
+
+    # Need to protect this operation
+    dump_fd = file(target_dump_fn,'w')
+    fcntl.lockf(dump_fd,fcntl.LOCK_EX)
+    json.dump(dump_dict,dump_fd)
+    fcntl.lockf(dump_fd,fcntl.LOCK_UN)
+    dump_fd.close()
+
+    debug("pickle version: %s %s " % (target_dump_fn, last_dump['version']))
   else:
-    cPickle.dump(dump_dict,file(target_pickle_fn,'w'))
+
+    # Need to protect this operation
+    dump_fd = file(target_dump_fn,'w')
+    fcntl.lockf(dump_fd,fcntl.LOCK_EX)
+    json.dump(dump_dict,dump_fd)
+    fcntl.lockf(dump_fd,fcntl.LOCK_UN)
+    dump_fd.close()
 
   # Post updated metadata to 
+  for peer in self_device.peer_list():
+    debug('[%s] broadcasting md update to %s' % (self_device, peer))
+    url = '/'.join(['http:/',peer,'recv_metadata',])
+    raw_post_data = {'device' : self_device.hnportcombo, 'metadata' : dump_dict}
+    data = urllib.urlencode(raw_post_data)
+    debug(url)
+    req = urllib2.Request(url, data)
+    res = urllib2.urlopen(req)
+    debug(res.read())
 
   return HttpResponse("%s : Sending peers updated metadata" % (self_device.hnportcombo), mimetype="text/plain")
 
+def recv_metadata(request):
+  incoming_device = request.POST.get('device')
+  #incoming_md = simplejson.loads(request.POST.get('metadata'))
+  incoming_md = eval(request.POST.get('metadata'))
+
+  target_fn = 'data/metadata_cache/%s_cache_of_%s' % (self_device.hnportcombo, incoming_device)
+  # Check if we have a cache of this devices md already
+  # if no, just write it (easy case)
+  if not os.path.exists(target_fn):
+    f = file(target_fn,'w')
+    f.write(incoming_md)
+    f.close()
+  else:
+    # if yes, read and make sure this version is newer
+    incoming_md_version = int(incoming_md['version'])
+
+    # Check existing cache 
+    f_c = file(target_fn,'r')
+    existing_md_cache = eval(f_c.read())
+    f_c.close()
+
+    existing_md_cache_version = int(existing_md_cache['version'])
+
+    debug('existing cache vers: %s, incoming vers: %s' % (existing_md_cache['version'], incoming_md_version))
+    if incoming_md_version > existing_md_cache_version:
+      debug('Incoming md cache version is newer so replace current md cache')
+      f_c = file(target_fn,'w')
+      f_c.write(request.POST.get('metadata'))
+      f_c.close()
+      
+  return HttpResponse("%s : recv metadata ok" % (self_device.hnportcombo), mimetype="text/plain")
