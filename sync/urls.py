@@ -21,6 +21,9 @@ urlpatterns = patterns('',
     # get
     (r'^peerlist$','sync.filesync.views.peerlist'),
 
+    # Trigger handler to send peers our updated file metadata
+    (r'^broadcast_metadata$','sync.filesync.views.broadcast_metadata'),
+
     (r'^download(?P<filepath>.*)','sync.filesync.views.download'),
     # Synonym of the above defined in p1 requirements
     (r'^xml/file(?P<filepath>.*)','sync.filesync.views.download'),
