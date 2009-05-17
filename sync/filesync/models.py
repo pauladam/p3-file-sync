@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 class Device(models.Model):
   preferred_name  = models.CharField(max_length=255)

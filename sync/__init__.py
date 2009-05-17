@@ -1,9 +1,11 @@
 # Filesync app start up code here:
 from filesync.models import File, Device
-import threading, sys, os
+import threading, sys, os, time, sched
 import urllib
 import utils
+from utils import debug
 import common_utils
+import background
 
 # reckon our name if were starting the server
 if 'runserver' in sys.argv:
