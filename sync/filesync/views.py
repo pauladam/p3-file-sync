@@ -211,11 +211,43 @@ def ruok(request):
   return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
 
 def acceptpeerlist(request, peerlist):
+
   self_device.peers = peerlist
   self_device.save()
-
   return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
 
 def peerlist(request):
 
   return HttpResponse("peerlist for %s : %s" % (server_hn_combo,self_device.peers) , mimetype="text/plain")
+
+def broadcast_metadata(request):
+
+  # Pack up our file metadata and send to known peers
+
+  # Get files
+  files = utils.get_files_for_device(self_device)
+  l = []
+  for f in files:
+    l.append(f.dict_repr())
+
+  # Dump format : dict  {'device_name':'ivo:8001', 'version': 1, 'files': [file list]}
+
+  # Pickle list
+  # If we have a dump already read its version, update and re-write
+  # else, simply write 
+  target_pickle_fn = 'data/%s.metadata.pickle' % self_device.hnportcombo.replace(':','_')
+
+  dump_dict = {'device_name':self_device.hnportcombo, 'version':1, 'files':l}
+
+  if os.path.exists(target_pickle_fn):
+    last_dump = cPickle.load(file(target_pickle_fn,'r'))
+    dump_dict['version'] = last_dump['version'] + 1
+    cPickle.dump(dump_dict,file(target_pickle_fn,'w'))
+    debug("pickle version: %s %s " % (target_pickle_fn, last_dump['version']))
+  else:
+    cPickle.dump(dump_dict,file(target_pickle_fn,'w'))
+
+  # Post updated metadata to 
+
+  return HttpResponse("%s : Sending peers updated metadata" % (self_device.hnportcombo), mimetype="text/plain")
+
