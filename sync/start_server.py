@@ -2,11 +2,6 @@
 
 import os, sys, subprocess, time
 
-try:
-  os.remove('/tmp/filesync_scan_fs_start_lock')
-except OSError:
-  pass
-
 num_servers = sys.argv[1]
 default_starting_port = 8000
 output_file = open('server_log','a')
