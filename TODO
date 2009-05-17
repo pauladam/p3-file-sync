@@ -135,7 +135,7 @@ P2 Reqs
 
 (DONE) 5. View Contents of Google Docs Files - See Project 1.
 
-6. View List of Remote Files - The user may select any of his/her devices and
+6. (DONE) View List of Remote Files - The user may select any of his/her devices and
    see a list of files available on that device.  Note, you will serve cached
    information that is potentially stale. 
 
@@ -159,7 +159,8 @@ on which the file has been backed up, and will download the file and put it
 back in its original location.  
 
 Requirements
-12.  Metadata Replication - Devices will use a push-based mechanism to exchange
+(DONE) 12. Metadata Replication - Devices will use a push-based mechanism to exchange
+     Problems?
 
 13.  FileList information .  Periodically, each online device will send its own
      information to all of the other devices in the system. 
@@ -179,7 +180,7 @@ Requirements
      at the time of the request, and create new replicas as other devices come
      online.
 
-15.  Discovery - You must implement a mechanism for devices to discover one another.
+(DONE) 15.  Discovery - You must implement a mechanism for devices to discover one another.
      Conceptually, the system is made up of several devices (i.e., all of the
      devices in a user's collection or a set of devices supporting multiple users
      but under a single administrative domain).  The devices in the system maintain

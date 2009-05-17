@@ -1,4 +1,4 @@
-import os, datetime, mimetypes, time, sys, random, fcntl, urllib, urllib2
+import os, datetime, mimetypes, time, sys, random, fcntl, urllib, urllib2, glob
 import simplejson as json
 import common_utils
 import utils
@@ -128,20 +128,47 @@ def index(request, message=None, error=None, device_name='all', output_format='h
 
     return HttpResponse(xml_out, mimetype="text/xml")
   else:
+    
+    current_device = self_device.hnportcombo
+    currently_viewing = 'Local Files'
 
-    files = list(file_set)
+    cache_device_list = [(mdc.split('/')[-1].split('of_')[-1]) 
+                         for mdc in glob.glob('data/metadata_cache/*') if mdc.split('/')[-1].startswith(server_hn_combo)]
 
-    local_docs_templ_entries = []
-    for f in files:
-      local_docs_templ_entries.append(f.dict_repr())
+    if request.GET.has_key('remote_device') and request.GET.get('remote_device') != self_device.hnportcombo:
+      cached_data = eval(file('data/metadata_cache/%s_cache_of_%s' % (server_hn_combo, request.GET.get('remote_device'))).read())
 
-      if device_name == 'gdocs':
-        local_docs_templ_entries = []
+      currently_viewing = 'Remote Device (%s)' % cached_data['device_name']
+      current_device = cached_data['device_name']
+
+      local_docs_templ_entries = []
+      # Convert timestamps back to datetime objects
+      for f in cached_data['files']:
+        # Convert time from long back into datetime for templ
+        f['mtime'] = datetime.datetime.fromtimestamp(int(f['mtime']))
+        local_docs_templ_entries.append(f)
+
+    elif request.GET.has_key('remote_device') and request.GET.get('remote_device') == self_device.hnportcombo:
+      return HttpResponseRedirect(reverse('sync.filesync.views.index'))
+
+    # Default set
+    else: 
+      files = list(file_set)
+
+      local_docs_templ_entries = []
+      for f in files:
+        local_docs_templ_entries.append(f.dict_repr())
+
+        if device_name == 'gdocs':
+          local_docs_templ_entries = []
 
     template_context = {'files': local_docs_templ_entries,
                         'gdocs_entries':gdocs_templ_entries, 
                         'message':message,
+                        'currently_viewing':currently_viewing,
+                        'current_device':current_device,
                         'this_device':self_device,
+                        'cache_device_list':cache_device_list,
                         'disk_icons':['Disk%s.gif' % random.randint(1,len(self_device.peer_list())) for i in range(len(self_device.peer_list()))]}
     return render_to_response('index.html', template_context)
 
@@ -216,6 +243,11 @@ def acceptpeerlist(request, peerlist):
 
   self_device.peers = peerlist
   self_device.save()
+
+  # Redirect to broadcast_metadata since our list has 
+  # been updated
+  #return HttpResponseRedirect(reverse('sync.filesync.views.broadcast_metadata'))
+
   return HttpResponse("ok from %s" % server_hn_combo, mimetype="text/plain")
 
 def peerlist(request):
@@ -223,6 +255,8 @@ def peerlist(request):
   return HttpResponse("peerlist for %s : %s" % (server_hn_combo,self_device.peers) , mimetype="text/plain")
 
 def broadcast_metadata(request):
+
+  debug('in broadcast_metadata')
   
   # TODO: Also take care of the case where we need to send md about 3rd party devices as well
 
@@ -283,18 +317,21 @@ def broadcast_metadata(request):
 def recv_metadata(request):
   incoming_device = request.POST.get('device')
   #incoming_md = simplejson.loads(request.POST.get('metadata'))
-  incoming_md = eval(request.POST.get('metadata'))
+  #incoming_md = eval(request.POST.get('metadata'))
+  incoming_md = request.POST.get('metadata')
 
   target_fn = 'data/metadata_cache/%s_cache_of_%s' % (self_device.hnportcombo, incoming_device)
   # Check if we have a cache of this devices md already
   # if no, just write it (easy case)
   if not os.path.exists(target_fn):
+    debug('in first if')
     f = file(target_fn,'w')
     f.write(incoming_md)
     f.close()
   else:
     # if yes, read and make sure this version is newer
-    incoming_md_version = int(incoming_md['version'])
+    evaled_incoming_md = eval(request.POST.get('metadata'))
+    incoming_md_version = int(evaled_incoming_md['version'])
 
     # Check existing cache 
     f_c = file(target_fn,'r')

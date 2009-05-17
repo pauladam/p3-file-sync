@@ -9,6 +9,7 @@ HOME = os.getcwd()
 
 urlpatterns = patterns('',
     (r'^$','sync.filesync.views.index'),
+    (r'^remote$','sync.filesync.views.index'),
     (r'^settings$','sync.filesync.views.settings'),
 
     # Status monitor used by name server to clean up 

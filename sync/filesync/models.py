@@ -35,7 +35,7 @@ class File(models.Model):
     d['size'] = self.size
     # Encode dates in a json serializable format
     if json_date:
-      d['mtime'] = datetime.datetime.fromtimestamp(self.mtime).strftime('%Y-%m-%dT%H:%M:%S')
+      d['mtime'] = datetime.datetime.fromtimestamp(self.mtime).strftime('%s')
     else:
       d['mtime'] = datetime.datetime.fromtimestamp(self.mtime)
     d['full_path'] = self.full_path

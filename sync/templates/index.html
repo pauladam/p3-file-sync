@@ -23,17 +23,25 @@
       <br>
 
       <!-- Todo: Use preferred name in dropdown if available -->
-      {% if this_device.peers %}
+      {% if cache_device_list %}
+      <form method='get' action='/remote' name='remotes_form'>
       Show files from device: 
-      <select>
+      <select name='remote_device' id='remotes' onChange="document.forms['remotes_form'].submit()">
         <option value="{{this_device.hnportcombo}}">{{this_device.hnportcombo}}</option>
-        {% for peer in this_device.peer_list %}
-          <option value="{{peer}}">{{peer}}</option>
+        {% for cached_device in cache_device_list %}
+          <option 
+          {% ifequal cached_device current_device %}
+          selected
+          {% endifequal %}
+
+          
+          value="{{cached_device}}">{{cached_device}}</option>
         {% endfor %}
       </select>
+      </form>
       {% endif %}
 
-      <br><br>
+      <br>
 
       <!-- TODO Support live changes -->
       <!-- TODO: Hide this after its been configured, but allow it to be enabled for reconfig -->
@@ -50,6 +58,34 @@
 
       {% if message %}
         {{ message }}
+      {% endif %}
+
+      <br>
+      <b>Viewing: {{ currently_viewing }}</b>
+
+      {% if files %}
+        <div id='markup_local_files'>
+          <table id='local_files'>
+            {% for file in files %}
+              <tr>
+                <td>{{ file.name }}</td>
+                <td>{{ file.path }}</td>
+                <td>{{ file.size|filesizeformat }}</td>
+                <td>{{ file.mtime|timesince }} ago</td>
+                <td>
+                  <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
+                </td>
+                <td> 
+                  {% if file.gdocs_able_to_upload %}
+                  <a href='/xml/gdocsupload{{ file.full_path }}'><img title='Upload to Google Docs' src='/static/images/upload.png'></a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      {% else %}
+          <p>No files are available.</p>
       {% endif %}
 
       <br>
@@ -76,33 +112,6 @@
           <p>No files are available.</p>
       {% endif %}
 
-      <br>
-      <b>Local Files</b>
-
-      {% if files %}
-        <div id='markup_local_files'>
-          <table id='local_files'>
-            {% for file in files %}
-              <tr>
-                <td>{{ file.name }}</td>
-                <td>{{ file.path }}</td>
-                <td>{{ file.size|filesizeformat }}</td>
-                <td>{{ file.mtime|timesince }} ago</td>
-                <td>
-                  <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
-                </td>
-                <td> 
-                  {% if file.gdocs_able_to_upload %}
-                  <a href='/xml/gdocsupload{{ file.full_path }}'><img title='Upload to Google Docs' src='/static/images/upload.png'></a>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </table>
-        </div>
-      {% else %}
-          <p>No files are available.</p>
-      {% endif %}
 
     </div>
 
