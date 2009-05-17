@@ -131,14 +131,7 @@ def index(request, message=None, error=None, device_name='all', output_format='h
 
     local_docs_templ_entries = []
     for f in files:
-      d = {}
-      d['name'] = f.name
-      d['size'] = f.size
-      d['mtime'] = datetime.datetime.fromtimestamp(f.mtime)
-      d['full_path'] = f.full_path
-      d['path'] = f.path
-      d['gdocs_able_to_upload'] = f.full_path.lower().endswith('.doc')
-      local_docs_templ_entries.append(d)
+      local_docs_templ_entries.append(f.dict_repr())
 
       if device_name == 'gdocs':
         local_docs_templ_entries = []

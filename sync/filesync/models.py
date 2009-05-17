@@ -28,6 +28,17 @@ class File(models.Model):
   # FK to 'owning' device
   device = models.ForeignKey(Device)
 
+  # Suitable for use in templates
+  def dict_repr(self):
+    d = {}
+    d['name'] = self.name
+    d['size'] = self.size
+    d['mtime'] = datetime.datetime.fromtimestamp(self.mtime)
+    d['full_path'] = self.full_path
+    d['path'] = self.path
+    d['gdocs_able_to_upload'] = self.full_path.lower().endswith('.doc')
+    return d
+
   def __unicode__(self):
     return self.full_path
 
