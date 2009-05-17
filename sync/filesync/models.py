@@ -12,7 +12,9 @@ class Device(models.Model):
     return "%s : %s" % (self.preferred_name, self.hnportcombo)
 
   def peer_list(self):
-    return self.peers.split(',')
+    l = self.peers.split(',')
+    l.sort()
+    return l
 
 class File(models.Model):
   full_path = models.CharField(max_length=255)
