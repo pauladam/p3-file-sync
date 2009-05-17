@@ -1,10 +1,10 @@
-import os, datetime, mimetypes, time, sys, random, fcntl, urllib, urllib2, glob
+import os, datetime, mimetypes, time, sys, random, fcntl, urllib, urllib2, glob, pycurl
 import simplejson as json
 import common_utils
 import utils
 from utils import debug
 
-from sync.filesync.models import File, Device
+from sync.filesync.models import File, Device, BackupFile
 
 from django.template import Context, loader
 from django.core.urlresolvers import reverse
@@ -149,7 +149,7 @@ def index(request, message=None, error=None, device_name='all', output_format='h
         local_docs_templ_entries.append(f)
 
     elif request.GET.has_key('remote_device') and request.GET.get('remote_device') == self_device.hnportcombo:
-      return HttpResponseRedirect(reverse('sync.filesync.views.index'))
+      return HttpResponseRedirect('/')
 
     # Default set
     else: 
@@ -353,13 +353,91 @@ def replicate(request, filepath):
   repl_num = request.GET.get('repl_num')
   debug("Replicate request from client for: %s, %s times" % (filepath, repl_num))
 
-  f = File.objects.filter(full_path=filepath).get()
+  f = File.objects.filter(full_path=filepath, device=self_device).get()
   f.replicated = True
   f.repl_promise = int(repl_num)
   f.save()
 
-  # Try to send to some peers
-  for peers in self_device.peer_list():
-    pass
+  fc = file(filepath,'r').read()
 
-  return HttpResponse("%s : replicate ok" % (self_device.hnportcombo), mimetype="text/plain")
+  # Initiate download / backup from some peers
+  for peer in self_device.peer_list():
+    debug('[%s] sending backup of %s to %s' % (self_device, f, peer))
+    url = '/'.join(['http:/',peer,'backup',filepath])
+
+    debug(url)
+
+    c = pycurl.Curl()
+    c.setopt(c.POST, 1)
+    c.setopt(c.URL, str(url))
+    c.setopt(c.HTTPPOST, [("datafile", (c.FORM_FILE, str(filepath)))])
+    c.setopt(c.VERBOSE, 1)
+    c.perform()
+    response_code = c.getinfo(pycurl.HTTP_CODE)
+    c.close()
+
+    if response_code == 200:
+      f.add_to_repl_list(peer)
+      f.save()
+
+  return HttpResponseRedirect(reverse('sync.filesync.views.index'))
+
+def restore(request, filepath):
+  f = File.objects.filter(full_path=filepath,device=self_device).get()
+  bf = BackupFile.objects.filter(remote_path=filepath).get()
+  for p in f.get_repl_list():
+    url = '/'.join(['http:/',p,'retrieve_backup',filepath])
+    debug('trying to restore %s from %s' % (f, p))
+    debug('%s' % (url))
+    data = urllib.urlopen(url).read()
+    file(bf.remote_path,'w').write(data)
+
+    f.deleted = False
+    f.save()
+
+    # Well want to catch an error here
+    # and if no error is thrown then
+    # we can assume we retrieved the backup
+    # successfully and we can break
+    break
+
+  return HttpResponseRedirect(reverse('sync.filesync.views.index'))
+
+
+def retrieve_backup(request, filepath):
+  # Could specify for device for insuring correctness
+  bf = BackupFile.objects.filter(remote_path=filepath).get()
+  debug('found BackupFile %s' % bf)
+
+  basename = filepath.split('/')[-1]
+  response = HttpResponse(mimetype=mimetypes.guess_type(basename))
+  response['Content-Disposition'] = "attachment; filename=" + basename
+  response['Content-Length'] = os.path.getsize(bf.local_path)
+  response.write(open(bf.local_path).read())
+
+  return response
+
+def backup(request, filepath):
+
+  incoming_file = request.FILES['datafile']
+
+  debug("file path : %s" % filepath)
+  #debug(incoming_file.name)
+  fc = incoming_file.read()
+
+  ## Prepare our backup location
+  local_path_dirs = '/tmp/%s/backups' % self_device.hnportcombo
+  local_path = "%s/%s" % (local_path_dirs, incoming_file.name)
+
+  try: 
+    os.makedirs(local_path_dirs)
+  except OSError:
+    pass
+  BackupFile(remote_path=filepath, local_path=local_path).save()
+  fd = file(local_path, 'w')
+  fd.write(fc)
+  fd.close()
+  
+  debug('[%s] got backup file' % (self_device.hnportcombo))
+
+  return HttpResponse("%s : backup ok" % (self_device.hnportcombo), mimetype="text/plain")

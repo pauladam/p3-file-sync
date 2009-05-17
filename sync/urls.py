@@ -8,8 +8,8 @@ import os
 HOME = os.getcwd()
 
 urlpatterns = patterns('',
-    (r'^$','sync.filesync.views.index'),
     (r'^remote$','sync.filesync.views.index'),
+    (r'^$','sync.filesync.views.index'),
     (r'^settings$','sync.filesync.views.settings'),
 
     # Status monitor used by name server to clean up 
@@ -27,6 +27,14 @@ urlpatterns = patterns('',
     
     # Replicate handler called from the client
     (r'^replicate/(?P<filepath>.*)','sync.filesync.views.replicate'),
+    # Restore handler called from client
+    (r'^restore/(?P<filepath>.*)','sync.filesync.views.restore'),
+
+    # Request to peer for backed up file
+    (r'^retrieve_backup/(?P<filepath>.*)','sync.filesync.views.retrieve_backup'),
+
+    # File receive handler from one peer to another
+    (r'^backup/(?P<filepath>.*)','sync.filesync.views.backup'),
 
     # Accept post of metadata repr.
     (r'^recv_metadata$','sync.filesync.views.recv_metadata'),

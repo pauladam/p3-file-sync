@@ -73,7 +73,17 @@
                 <td>{{ file.size|filesizeformat }}</td>
                 <td>{{ file.mtime|timesince }} ago</td>
                 <td>
+                  {% if not file.deleted %}
                   <a href='/download/{{ file.full_path }}'><img title='Download file' src='/static/images/download.gif'></a>
+                  {% endif %}
+                </td>
+                <td> 
+                  <INPUT 
+                  {% if file.deleted %}
+                  checked="yes"
+                  {% endif %}
+                  
+                  NAME="" TYPE=CHECKBOX DISABLED>
                 </td>
                 <td> 
                   {% if file.gdocs_able_to_upload %}
@@ -81,7 +91,14 @@
                   {% endif %}
                 </td>
                 <td> 
-                  <input type='button' value='Backup' class='backup_button' onclick='javascript:replicate("{{ file.full_path}}");'>
+                  {% if file.replicated %}
+                  <input type='button' value='Restore' class='backup_button' onclick='javascript:restore("{{ file.full_path}}");'>
+                  {{ file.repl_ratio }} 
+                  {% else %}
+                    {% if not file.deleted %}
+                      <input type='button' value='Backup' class='backup_button' onclick='javascript:replicate("{{ file.full_path}}");'>
+                    {% endif %}
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}
@@ -147,6 +164,7 @@
                                  {key:"size",label:"File Size"}, 
                                  {key:"lastmodified",label:"Last Modified",sortable:true}, 
                                  {key:"download",label:"Download", maxAutoWidth:50},
+                                 {key:"deleted",label:"Deleted"},
                                  {key:"upload",label:"Upload", maxAutoWidth:35}, 
                                  {key:"replicate",label:"Backup/Retrieve"}]; 
     
@@ -157,6 +175,7 @@
                                                           {key:"size"}, 
                                                           {key:"lastmodified"}, 
                                                           {key:"download"}, 
+                                                          {key:"deleted"}, 
                                                           {key:"upload"}, 
                                                           {key:"replicate"} ] }; 
 
@@ -171,6 +190,11 @@
       var repl_num = window.prompt("How many replicas?");
       window.location = "http://{{ this_device.hnportcombo }}"+"/replicate/" + file_path + "?repl_num="+repl_num;
     }
+
+    var restore = function(file_path){
+      window.location = "http://{{ this_device.hnportcombo }}"+"/restore/" + file_path ;
+    }
+
 
     </script>
 
