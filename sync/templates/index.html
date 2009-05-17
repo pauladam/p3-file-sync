@@ -23,17 +23,15 @@
       <br>
 
       <!-- Todo: Use preferred name in dropdown if available -->
+      {% if this_device.peers %}
       Show files from device: 
       <select>
-      {% if this_device.peers %}
         <option value="{{this_device.hnportcombo}}">{{this_device.hnportcombo}}</option>
         {% for peer in this_device.peer_list %}
           <option value="{{peer}}">{{peer}}</option>
         {% endfor %}
-      {% else %}
-        <option value="" disabled>Disabled</option>
-      {% endif %}
       </select>
+      {% endif %}
 
       <br><br>
 
