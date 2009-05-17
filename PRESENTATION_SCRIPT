@@ -1,1 +1,10 @@
-1, Show django admin interface and CRUD utils
+1, Django admin interface and CRUD utils
+  A, NS http://ivo:6666/admin/ns/host/
+  B, Sync Ex. http://ivo:8000/admin/filesync/
+ 
+2, Shell
+  $ python manage.py shell
+  In [1]: from filesync.models import File, Device
+  ... 
+
+3, 

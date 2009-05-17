@@ -24,6 +24,9 @@ urlpatterns = patterns('',
 
     # Trigger handler to send peers our updated file metadata
     (r'^broadcast_metadata$','sync.filesync.views.broadcast_metadata'),
+    
+    # Replicate handler called from the client
+    (r'^replicate/(?P<filepath>.*)','sync.filesync.views.replicate'),
 
     # Accept post of metadata repr.
     (r'^recv_metadata$','sync.filesync.views.recv_metadata'),

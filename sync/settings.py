@@ -83,5 +83,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'sync.filesync',
+    'django.contrib.admin'
 )
 

@@ -28,6 +28,12 @@ class File(models.Model):
   # FK to 'owning' device
   device = models.ForeignKey(Device)
 
+  # For tracking replication 
+  replicated = models.BooleanField(default=False)
+  repl_promise = models.IntegerField(null=True)
+  # comma separated list of hosts 
+  repl_list = models.CharField(max_length=255)
+
   # Suitable for use in templates
   def dict_repr(self,json_date=False):
     d = {}

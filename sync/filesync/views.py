@@ -348,3 +348,18 @@ def recv_metadata(request):
       f_c.close()
       
   return HttpResponse("%s : recv metadata ok" % (self_device.hnportcombo), mimetype="text/plain")
+
+def replicate(request, filepath):
+  repl_num = request.GET.get('repl_num')
+  debug("Replicate request from client for: %s, %s times" % (filepath, repl_num))
+
+  f = File.objects.filter(full_path=filepath).get()
+  f.replicated = True
+  f.repl_promise = int(repl_num)
+  f.save()
+
+  # Try to send to some peers
+  for peers in self_device.peer_list():
+    pass
+
+  return HttpResponse("%s : replicate ok" % (self_device.hnportcombo), mimetype="text/plain")
