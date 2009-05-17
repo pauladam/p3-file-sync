@@ -217,5 +217,4 @@ DONE
   Two Problems
   (DONE) 1. Worker doesnt watch fs for changes
   (DONE) 2. nested dirs arent supported
-
-
+  Write log() which prepends messages w/ timestamp and logging device name

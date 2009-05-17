@@ -4,8 +4,6 @@ import fns_utils
 import datetime
 
 def check_filesync_servers():
-  print 'ping!'
-
   if 'runserver' in sys.argv:
     # This may be run by multiple threads
     # but its ok tho tho  b/c this threads 
