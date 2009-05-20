@@ -5,10 +5,10 @@
 
     <!-- Data table deps -->
     <!-- Combo-handled YUI CSS files: --> 
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/datatable/assets/skins/sam/datatable.css"> 
+    <link rel="stylesheet" type="text/css" href="/static/css/datatable.css"> 
     <!-- Combo-handled YUI JS files: --> 
     <script type="text/javascript" src="/static/js/jquery.min.js"></script> 
-    <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/element/element-min.js&2.7.0/build/paginator/paginator-min.js&2.7.0/build/datasource/datasource-min.js&2.7.0/build/datatable/datatable-min.js"></script> 
+    <script type="text/javascript" src="/static/js/combo.js"></script> 
     <link rel="stylesheet" type="text/css" href="/static/css/site.css"> 
     <title>Sync Service</title>
   </head>
@@ -51,9 +51,13 @@
         <input name='rootdir' type='text' value='{{this_device.rootdir}}'>
 
         Device Name:
-        <input name='device_name' type='text' value='{{this_device.preferred_name}}'>
+        <input name='device_name' type='text' value='{{this_device.preferred_name}}' style='width:50px'>
 
         <input type='submit' value='Change'>
+      </form>
+
+      <form method='get' action='/'>
+        Search: <input name='contains' type='text' value='' style='width:50px'> <input type='submit' value='Search'>
       </form>
 
       {% if message %}

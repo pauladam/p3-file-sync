@@ -4,6 +4,9 @@ import os, sys, subprocess, time
 
 num_servers = sys.argv[1]
 default_starting_port = 8000
+if len(sys.argv) > 2:
+  default_starting_port = int(sys.argv[2])
+
 output_file = open('server_log','a')
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sync.settings';

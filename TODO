@@ -2,6 +2,30 @@ Projects are due 12 noon may 21
 
 13% of grade
 
+Storage : XML DB / RDBMS
+Language: Python / Java
+Framework: Restlets / Django
+
+1. Google docs Login
+2. View List of Local Files
+3. View Contents of Local Files
+4. View List of Google Docs Files
+5. View Contents of Google Docs Files
+6. View List of Remote Files
+7. View Contents of Remote Files
+(7.5 Support both html / xml representations for the above views)
+8. Search Local Files
+9. Search Remote Files
+  MISSING
+10. Backup Local Files
+11. Restore Files
+12. Metadata Replication
+  MISSING Merge stuff
+  A. For full credit, devices may exchange information received by other devices.
+13. Data Replication
+14. Discovery
+  A. For full credit, implement a solution that allows devices to be dynamically added to the system.
+
 P1 Reqs
 1. Login - 
   (DONE) A) The user will visit a main login page and your web 

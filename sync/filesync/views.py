@@ -85,6 +85,7 @@ def login(request):
 
 # TODO: Add param to fetch / show contents of cached md for other devices
 def index(request, message=None, error=None, device_name='all', output_format='html'):
+
   if not authd_with_gdocs(request):
     return render_to_response('redirect_to_gdocs.html', {'authsub_url': get_authsub_url()})
   else: 
@@ -187,7 +188,7 @@ def settings(request):
                    <Root directory="%s"/>
                  </Settings>"""
 
-    root_dir = File.objects.filter(device=self_device).get().rootdir
+    root_dir = File.objects.filter(device=self_device)[:1].get().rootdir
 
     return HttpResponse(xml_out % root_dir, mimetype="text/xml")
 
@@ -243,6 +244,36 @@ def acceptpeerlist(request, peerlist):
 
   self_device.peers = peerlist
   self_device.save()
+
+  # Check for any oustanding backup commitments
+  incompletely_replicated_files = [f for f in File.objects.filter(device=self_device) if f.replicated and len(f.get_repl_list()) < f.repl_promise ]
+
+  if incompletely_replicated_files: 
+    debug("[%s] Outstanding backups: %s" % (self_device, incompletely_replicated_files))
+
+  #candidate_devices = []
+  for f in incompletely_replicated_files:
+    # Do we now know of any peers who havent yet contributed to a particular file's replication promise 
+    for p in self_device.peer_list():
+      if p not in f.get_repl_list():
+        #candidate_devices.append(p)
+
+        debug("%s is a candidate to back up %s!" % (p, f))
+        debug('[%s] sending backup of %s to %s' % (self_device, f, p))
+        url = '/'.join(['http:/',p,'backup',f.full_path])
+
+        c = pycurl.Curl()
+        c.setopt(c.POST, 1)
+        c.setopt(c.URL, str(url))
+        c.setopt(c.HTTPPOST, [("datafile", (c.FORM_FILE, str(f.full_path)))])
+        c.setopt(c.VERBOSE, 1)
+        c.perform()
+        response_code = c.getinfo(pycurl.HTTP_CODE)
+        c.close()
+
+        if response_code == 200:
+          f.add_to_repl_list(p)
+          f.save()
 
   # Redirect to broadcast_metadata since our list has 
   # been updated
@@ -360,25 +391,33 @@ def replicate(request, filepath):
 
   fc = file(filepath,'r').read()
 
-  # Initiate download / backup from some peers
+  # Send to some peers
   for peer in self_device.peer_list():
-    debug('[%s] sending backup of %s to %s' % (self_device, f, peer))
-    url = '/'.join(['http:/',peer,'backup',filepath])
 
-    debug(url)
+    if len(f.get_repl_list()) < f.repl_promise:
+      debug('[%s] sending backup of %s to %s' % (self_device, f, peer))
+      url = '/'.join(['http:/',peer,'backup',filepath])
 
-    c = pycurl.Curl()
-    c.setopt(c.POST, 1)
-    c.setopt(c.URL, str(url))
-    c.setopt(c.HTTPPOST, [("datafile", (c.FORM_FILE, str(filepath)))])
-    c.setopt(c.VERBOSE, 1)
-    c.perform()
-    response_code = c.getinfo(pycurl.HTTP_CODE)
-    c.close()
+      debug(url)
 
-    if response_code == 200:
-      f.add_to_repl_list(peer)
-      f.save()
+      try:
+
+        c = pycurl.Curl()
+        c.setopt(c.POST, 1)
+        c.setopt(c.URL, str(url))
+        c.setopt(c.HTTPPOST, [("datafile", (c.FORM_FILE, str(filepath)))])
+        c.setopt(c.VERBOSE, 1)
+        c.perform()
+        response_code = c.getinfo(pycurl.HTTP_CODE)
+        c.close()
+
+      except:
+        return HttpResponseRedirect(reverse('sync.filesync.views.index'))
+        
+
+      if response_code == 200:
+        f.add_to_repl_list(peer)
+        f.save()
 
   return HttpResponseRedirect(reverse('sync.filesync.views.index'))
 
@@ -433,6 +472,9 @@ def backup(request, filepath):
     os.makedirs(local_path_dirs)
   except OSError:
     pass
+
+  debug(request.META)
+
   BackupFile(remote_path=filepath, local_path=local_path).save()
   fd = file(local_path, 'w')
   fd.write(fc)

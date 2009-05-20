@@ -7,4 +7,65 @@
   In [1]: from filesync.models import File, Device
   ... 
 
-3, 
+3, Google docs Login
+  http://ivo:8001/login
+
+4, View google docs
+
+5, Upload to google docs
+
+6, View List of Local Files
+  http://ivo:8000/
+
+7, View Contents of Local Files
+  http://ivo:8000/
+
+8, View List of Google Docs Files
+
+9, View Contents of Google Docs Files
+
+10, View List of Remote Files
+   http://ivo:8000/ and select ivo:8001
+   http://ivo:8001/remote?remote_device=ivo%3A8000
+
+11. View Contents of Remote Files
+    (11.5 Support both html / xml representations for the above views)
+
+   http://ivo:8001/remote?remote_device=ivo%3A8000
+
+   http://ivo:8000/settings
+
+   http://ivo:8000/settings?rootdir=%2Fhome%2Fpaul%2Fshared&device_name=shared
+
+   http://ivo:8000/dot%20configs/xml/filelist
+   http://ivo:8000/all/xml/filelist
+
+   http://ivo:8000/all/xml/filelist?contains=b
+
+   http://ivo:8000/all/xml/filelist?matches=bash_profile
+
+   Download link
+
+12. Search Local Files
+   http://ivo:8000/?contains=READ
+
+13. Backup Local Files
+
+    Start 2 servers $ ./start_server.py 2 8000
+    File backup
+    Incremental
+    Delete and restore
+
+14. Restore Files
+
+15. Metadata Replication
+
+16. Data Replication
+    http://ivo:8000/remote?remote_device=ivo%3A8001
+
+17. Discovery
+    http://ivo:6666/hostlist
+    http://ivo:6666/admin/ns/host/
+    (ipython shell)
+
+

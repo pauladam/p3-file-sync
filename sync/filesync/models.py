@@ -77,4 +77,5 @@ class File(models.Model):
 class BackupFile(models.Model):
   remote_path = models.CharField(max_length=255)
   local_path = models.CharField(max_length=255)
+  original_owner = models.CharField(max_length=255)
  
